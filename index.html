@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RANGE//PROTOCOL — Aim Trainer & Sens Lab buat Valorant</title>
+<meta name="description" content="Aim trainer 3D gratis rasa Valorant: Tes Serius dengan AIM SCORE, Cari Sens Otomatis (metode PSA terukur), latihan drill, spray, dan replay analisis. Satu file, raw input, jalan di browser.">
+<meta name="theme-color" content="#0f1923">
+<meta property="og:title" content="RANGE//PROTOCOL — Aim Trainer & Sens Lab Valorant">
+<meta property="og:description" content="Tes aim serius → AIM SCORE 0–100 · Cari sens otomatis (PSA terukur) · Latihan drill · Kartu skor buat dibagi. Gratis & fan-made.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230f1923'/%3E%3Cg stroke='%23ff4655' stroke-width='7'%3E%3Cline x1='32' y1='7' x2='32' y2='21'/%3E%3Cline x1='32' y1='43' x2='32' y2='57'/%3E%3Cline x1='7' y1='32' x2='21' y2='32'/%3E%3Cline x1='43' y1='32' x2='57' y2='32'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='4.5' fill='%23ece8e1'/%3E%3C/svg%3E">
+<style>
+  :root{
+    color-scheme: dark;
+    --bg:#0f1923; --panel:#16222d; --panel2:#1e2c39;
+    --ink:#ece8e1; --ink2:#aab6bd; --muted:#7a8894;
+    --line:rgba(236,232,225,.09); --grid:#243441; --baseline:#2e4050;
+    --red:#ff4655; --red-dk:#c73a47; --teal:#3be0c8;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+    --good:#0ca30c; --warn:#fab219; --serious:#ec835a; --critical:#d03b3b;
+    --font:system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:var(--font)}
+  body{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:22px 16px 48px;
+    background-image:repeating-linear-gradient(115deg, rgba(236,232,225,.016) 0 2px, transparent 2px 96px)}
+  .app{width:100%;max-width:1140px}
+  .cut{clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))}
+  .cutS{clip-path:polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px))}
+
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .brand h1{font-size:26px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;line-height:1}
+  .brand h1 em{font-style:normal;color:var(--red)}
+  .brand p{color:var(--muted);font-size:12px;margin-top:6px;letter-spacing:.04em}
+  .hdr-right{display:flex;gap:8px;align-items:center}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.06em;
+    padding:6px 12px;border:1px solid var(--line);color:var(--ink2);background:var(--panel)}
+  .dot{width:7px;height:7px;display:inline-block;background:var(--muted)}
+  section[hidden]{display:none!important}
+
+  .card{background:var(--panel);border:1px solid var(--line);padding:20px;position:relative}
+  .card::before{content:"";position:absolute;top:0;left:0;width:26px;height:3px;background:var(--red)}
+  .card h2{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+  .card h2 span{color:var(--red)}
+  .card .sub{color:var(--muted);font-size:12px;margin-bottom:14px;letter-spacing:.02em}
+  .grid{display:grid;gap:14px}
+  @media(min-width:860px){ .grid.cols2{grid-template-columns:1fr 1fr}
+    .grid.menu{grid-template-columns:360px 1fr} }
+
+  label.f{display:block;font-size:11px;color:var(--ink2);margin:13px 0 6px;letter-spacing:.1em;text-transform:uppercase}
+  input[type=number],input[type=text]{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+    font:600 15px var(--font);padding:10px 12px;outline:none}
+  input:focus{border-color:var(--red)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{cursor:pointer;font-size:12px;letter-spacing:.04em;color:var(--ink2);border:1px solid var(--line);
+    padding:8px 13px;background:var(--panel2);user-select:none}
+  .chip.on{border-color:var(--red);color:var(--ink);background:rgba(255,70,85,.10)}
+  .btn{cursor:pointer;font:700 13px var(--font);letter-spacing:.12em;text-transform:uppercase;border:none;
+    padding:13px 20px;color:#fff;background:var(--red);clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))}
+  .btn:hover{background:var(--red-dk)}
+  .btn:disabled{opacity:.35;cursor:default;pointer-events:none}
+  .btn{transition:background .15s, transform .12s}
+  .btn:active{transform:translateY(1px)}
+  ::selection{background:rgba(255,70,85,.35)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:#243441;border:2px solid var(--bg)}
+  .card,.chartbox,.modecard{transition:border-color .18s, transform .18s, box-shadow .18s}
+  .modecard:hover{box-shadow:0 10px 34px rgba(255,70,85,.09)}
+  .brand h1 em{animation:slashblink 3s infinite}
+  @keyframes slashblink{0%,90%,100%{opacity:1}94%{opacity:.25}}
+  input[type=number],input[type=text]{transition:border-color .15s}
+  .btn.ghost{background:var(--panel2);color:var(--ink2);box-shadow:inset 0 0 0 1px var(--line)}
+  .btn.ghost:hover{color:var(--ink);background:var(--panel)}
+  .btn.sm{padding:9px 13px;font-size:11px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .note{font-size:12px;color:var(--muted);line-height:1.6}
+  .preview{margin-top:14px;padding:12px 14px;background:var(--panel2);font-size:12.5px;color:var(--ink2);border-left:2px solid var(--red)}
+  .preview b{color:var(--ink)}
+
+  /* ---- menu mode ---- */
+  .modes{display:grid;gap:12px}
+  .modecard{cursor:pointer;background:var(--panel);border:1px solid var(--line);padding:18px 20px;
+    display:flex;gap:18px;align-items:center;transition:border-color .15s, transform .15s;position:relative}
+  .modecard:hover{border-color:var(--red);transform:translateX(4px)}
+  .modecard .num{font-size:26px;font-weight:800;color:var(--red);letter-spacing:.06em;min-width:52px}
+  .modecard .tt{font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  .modecard .dd{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.55}
+  .modecard .meta{margin-left:auto;font-size:11px;color:var(--ink2);letter-spacing:.08em;white-space:nowrap}
+  .modecard .arrow{color:var(--red);font-weight:800;margin-left:10px}
+  .drillbar{background:var(--panel);border:1px solid var(--line);border-top:none;padding:14px 20px;display:none}
+  .drillbar.open{display:block}
+
+  /* ---- stage ---- */
+  #stage{position:relative;overflow:hidden;border:1px solid var(--line);background:#0e1216;aspect-ratio:16/9;cursor:crosshair}
+  #stage:fullscreen{aspect-ratio:auto;border:none}
+  #cv{width:100%;height:100%;display:block}
+  .hud{position:absolute;inset:0;pointer-events:none;font-size:13px}
+  .hud .tl{position:absolute;top:12px;left:14px;color:#eef2ef;text-shadow:0 1px 4px rgba(0,0,0,.65)}
+  .hud .tl b{font-size:13px;letter-spacing:.12em;text-transform:uppercase;background:rgba(15,25,35,.72);
+    padding:5px 10px;display:inline-block;border-left:3px solid var(--red)}
+  .hud .tl .sub2{display:block;margin-top:6px;font-size:12px;opacity:.85}
+  .hud .tr{position:absolute;top:12px;right:14px;display:flex;gap:8px;pointer-events:auto}
+  .hud .bc{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:rgba(238,242,239,.5);font-size:11.5px;
+    letter-spacing:.1em;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+  .iconbtn{pointer-events:auto;cursor:pointer;background:rgba(15,25,35,.78);border:1px solid var(--line);
+    color:var(--ink2);padding:6px 10px;font-size:12px}
+  .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(10,15,21,.78);backdrop-filter:blur(3px);pointer-events:auto;text-align:center;padding:20px}
+  .overlay .box{max-width:600px}
+  .overlay h3{font-size:22px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+  .overlay h3 b{color:var(--red)}
+  .overlay p{color:var(--ink2);font-size:14px;line-height:1.65}
+  .overlay .hintkey{margin-top:16px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .overlay .obtns{margin-top:16px;display:flex;gap:10px;justify-content:center}
+  .overlay[hidden]{display:none}
+
+  /* ---- results ---- */
+  .hero{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+  .scorebox{display:flex;align-items:center;gap:18px}
+  .scorebox .big{font-size:74px;font-weight:800;line-height:.95;letter-spacing:-.01em}
+  .grade{font-size:30px;font-weight:800;padding:10px 16px;color:#fff;background:var(--red);
+    clip-path:polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))}
+  .lab{font-size:11px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+  .under{font-size:13px;color:var(--ink2);margin-top:8px;line-height:1.6}
+  .delta{display:inline-block;font-size:12px;font-weight:700;padding:4px 10px;margin-left:10px;
+    background:rgba(59,224,200,.1);color:var(--teal)}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .tile{background:var(--panel2);border:1px solid var(--line);padding:13px 14px}
+  .tile .l{font-size:10.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+  .tile .v{font-size:23px;font-weight:750;margin-top:5px}
+  .tile .d{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .chartbox{background:var(--panel);border:1px solid var(--line);padding:18px;position:relative}
+  .chartbox::before{content:"";position:absolute;top:0;left:0;width:26px;height:3px;background:var(--red)}
+  .chartbox h3{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  .chartbox .csub{font-size:11.5px;color:var(--muted);margin:3px 0 10px}
+  svg text{font-family:var(--font)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--ink2)}
+  .legend .it{display:inline-flex;align-items:center;gap:6px}
+  .legend .dot{border-radius:50%}
+  .tooltip{position:fixed;z-index:50;background:var(--panel2);border:1px solid var(--line);
+    padding:7px 10px;font-size:12px;color:var(--ink);pointer-events:none;display:none;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+  .vlist{display:grid;gap:10px}
+  .vitem{display:flex;gap:12px;background:var(--panel2);border:1px solid var(--line);padding:12px 14px;
+    font-size:13.5px;line-height:1.6;color:var(--ink2)}
+  .vitem b{color:var(--ink)}
+  .sev{flex:0 0 auto;width:8px}
+  details.tblwrap summary{cursor:pointer;font-size:12px;color:var(--muted);letter-spacing:.06em}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12.5px}
+  th{color:var(--muted);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    text-align:right;padding:7px 8px;border-bottom:1px solid var(--grid)}
+  td{color:var(--ink2);text-align:right;padding:5px 8px;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums}
+  th:first-child,td:first-child{text-align:left}
+  .stack{display:grid;gap:14px}
+  footer{margin-top:28px;color:var(--muted);font-size:11px;text-align:center;letter-spacing:.04em;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <h1>RANGE<em>//</em>PROTOCOL</h1>
+      <p>Aim trainer & sens lab buat Valorant — latihan · tes serius · PSA finder · replay buat dibedah Claude</p>
+    </div>
+    <div class="hdr-right">
+      <span class="pill" id="raw-pill"><span class="dot"></span>RAW INPUT: CEK PAS MAIN</span>
+      <button class="btn ghost sm" id="btn-menu" hidden>≡ Menu</button>
+    </div>
+  </header>
+
+  <!-- ================= MENU ================= -->
+  <section id="screen-menu">
+    <div class="grid menu">
+      <div class="card cut">
+        <h2><span>//</span> Setup kamu</h2>
+        <div class="sub">Satu angka doang: sens Valorant kamu (yang di Settings → Sensitivity: Aim). DPI ga dibutuhin — semua pengukuran jalan di rotasi kamera.</div>
+        <label class="f">Sens Valorant</label>
+        <input type="number" id="in-sens" value="0.4" min="0.01" max="3" step="0.001">
+        <div class="preview" id="preview"></div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn ghost sm" id="btn-copylink">Salin link setup</button>
+        </div>
+        <div class="note" style="margin-top:12px">Buka file ini langsung di Chrome/Edge (bukan preview) biar <b style="color:var(--ink2)">raw input</b> aktif. Matiin Enhance Pointer Precision di Windows. Tekan <b style="color:var(--ink2)">F</b> buat fullscreen pas main.</div>
+      </div>
+      <div>
+        <div class="modes">
+          <div class="modecard cutS" data-m="test">
+            <div class="num">01</div>
+            <div><div class="tt">Tes Serius</div>
+              <div class="dd">Benchmark penuh: Flick 30 · Micro 20 · Peek 16 · Tracking 45 dtk. Keluar AIM SCORE 0–100, diagnosa presisi, rekomendasi sens, kartu skor buat dibagi.</div></div>
+            <div class="meta">±7 MENIT</div><div class="arrow">→</div>
+          </div>
+          <div class="modecard cutS" data-m="psa">
+            <div class="num">02</div>
+            <div><div class="tt">Cari Sens Otomatis</div>
+              <div class="dd"><b>Bingung sens berapa yang "bener"?</b> Mode ini nyariin: kamu tinggal flick 7 ronde, tiap ronde sens diganti diam-diam (biar ga bias), algoritmanya nyempit terus sampai ketemu sens yang bikin flick-mu mendarat paling pas. Basisnya metode PSA klasik (era Quake), tapi dinilai dari pengukuran — bukan perasaan.</div></div>
+            <div class="meta">±4 MENIT</div><div class="arrow">→</div>
+          </div>
+          <div class="modecard cutS" data-m="practice" id="mc-practice">
+            <div class="num">03</div>
+            <div><div class="tt">Latihan Bebas</div>
+              <div class="dd">Drill tanpa batas & tanpa skor akhir — murni pemanasan dan ngasah. Pilih drill-nya, ESC kapan aja buat selesai.</div></div>
+            <div class="meta">BEBAS</div><div class="arrow">→</div>
+          </div>
+          <div class="drillbar cutS" id="drillbar">
+            <div class="chips">
+              <div class="chip on" data-d="flick">Flick 1-tap</div>
+              <div class="chip" data-d="micro">Micro presisi</div>
+              <div class="chip" data-d="peek">Peek duel</div>
+              <div class="chip" data-d="track">Strafe tracking</div>
+            </div>
+            <div class="row" style="margin-top:12px">
+              <button class="btn sm" id="btn-practice">Mulai latihan →</button>
+              <span class="note" id="drill-desc"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card cut" style="margin-top:12px">
+          <h2><span>//</span> Alur biar beneran naik</h2>
+          <div class="sub">Bukan main-main — protokolnya gini:</div>
+          <div class="note">
+            <b style="color:var(--ink2)">1.</b> Jalanin <b style="color:var(--ink2)">Cari Sens Otomatis</b> buat dapet sens dasar yang pas. &nbsp;
+            <b style="color:var(--ink2)">2.</b> Validasi pakai <b style="color:var(--ink2)">Tes Serius</b> — lihat AIM SCORE & diagnosa kelemahan. &nbsp;
+            <b style="color:var(--ink2)">3.</b> <b style="color:var(--ink2)">Latihan Bebas</b> 10 menit/hari nyerang kelemahan yang ketahuan. &nbsp;
+            <b style="color:var(--ink2)">4.</b> Tes ulang tiap 3–4 hari, drop replay ke Claude buat dibedah — bandingin antar sesi.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STAGE ================= -->
+  <section id="screen-test" hidden>
+    <div id="stage">
+      <canvas id="cv"></canvas>
+      <div class="hud">
+        <div class="tl"><b id="hud-phase">—</b><span class="sub2" id="hud-prog"></span></div>
+        <div class="tr">
+          <span class="pill" id="hud-raw" style="background:rgba(15,25,35,.78)"></span>
+          <button class="iconbtn" id="btn-sound" title="Suara">🔊</button>
+          <button class="iconbtn" id="btn-fs" title="Fullscreen (F)">⛶</button>
+        </div>
+        <div class="bc" id="hud-hint">Klik buat mulai · F fullscreen · ESC pause</div>
+      </div>
+      <div class="overlay" id="overlay">
+        <div class="box">
+          <h3 id="ov-title">Siap?</h3>
+          <p id="ov-text"></p>
+          <div class="obtns" id="ov-btns" hidden>
+            <button class="btn sm" id="ov-primary">Lanjut</button>
+            <button class="btn ghost sm" id="ov-secondary">Ke menu</button>
+          </div>
+          <div class="hintkey" id="ov-hint">Klik di mana aja buat lanjut</div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px;justify-content:space-between">
+      <span class="note" id="test-note"></span>
+      <button class="btn ghost sm" id="btn-abort">✕ Ke menu</button>
+    </div>
+  </section>
+
+  <!-- ================= HASIL TES ================= -->
+  <section id="screen-results" hidden>
+    <div class="stack">
+      <div class="card cut">
+        <div class="hero">
+          <div class="scorebox">
+            <div>
+              <div class="lab">AIM SCORE</div>
+              <div class="big" id="res-score">—</div>
+            </div>
+            <div class="grade" id="res-grade">—</div>
+          </div>
+          <div style="flex:1;min-width:240px">
+            <div class="lab" id="res-heroLabel">Rekomendasi sens</div>
+            <div style="font-size:38px;font-weight:800" id="res-sens">—</div>
+            <div class="under" id="res-under"></div>
+            <div class="under" id="res-edpirow"></div>
+          </div>
+          <div style="min-width:250px;max-width:360px">
+            <div class="row">
+              <button class="btn sm" id="btn-card">⬇ Kartu skor</button>
+              <button class="btn ghost sm" id="btn-replay">⬇ Replay</button>
+              <button class="btn ghost sm" id="btn-digest">Salin laporan</button>
+            </div>
+            <div class="note" style="margin-top:10px">Kartu skor = PNG buat dibagi ke temen. Replay/laporan = drop ke chat Claude buat dibedah per milidetik.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card cut">
+        <h2><span>//</span> Diagnosa — presisi, bukan kira-kira</h2>
+        <div class="sub">Diurutin dari yang paling ngerugiin. Merah = prioritas · kuning = perhatian · hijau = udah kuat.</div>
+        <div class="vlist" id="res-verdicts"></div>
+      </div>
+
+      <div class="tiles" id="res-tiles"></div>
+
+      <div class="grid cols2">
+        <div class="chartbox cutS">
+          <h3>Peta peluru di sekitar kepala</h3>
+          <div class="csub">Semua tembakan Flick/Micro/Peek, dinormalisasi ukuran kepala (sumbu = radius kepala).</div>
+          <div id="chart-place"></div>
+          <div class="legend" id="legend-place"></div>
+        </div>
+        <div class="chartbox cutS">
+          <h3>Flick kiri vs kanan</h3>
+          <div class="csub">Rasio flick pertama vs jarak target per arah — 100% = pas.</div>
+          <div id="chart-dir"></div>
+        </div>
+      </div>
+
+      <div class="card cut">
+        <h2><span>//</span> Data mentah</h2>
+        <details class="tblwrap" open>
+          <summary>Tabel per-target (Flick + Micro)</summary>
+          <div style="overflow-x:auto"><table id="res-table"></table></div>
+        </details>
+      </div>
+
+      <div class="row">
+        <button class="btn" id="btn-retest">Tes lagi pakai sens rekomendasi</button>
+        <button class="btn ghost" id="btn-gopsa">Cari Sens Otomatis</button>
+        <button class="btn ghost" id="btn-setup">← Menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HASIL PSA ================= -->
+  <section id="screen-psa" hidden>
+    <div class="stack">
+      <div class="card cut">
+        <div class="hero">
+          <div style="flex:1;min-width:250px">
+            <div class="lab">Hasil Cari Sens Otomatis (PSA) — sens kalibrasi flick kamu</div>
+            <div style="font-size:52px;font-weight:800" id="psa-sens">—</div>
+            <div class="under" id="psa-under"></div>
+            <div class="under" id="psa-edpirow"></div>
+          </div>
+          <div style="min-width:250px;max-width:380px">
+            <div class="row">
+              <button class="btn sm" id="psa-use">Pakai sens ini</button>
+              <button class="btn ghost sm" id="psa-test">Validasi di Tes Serius</button>
+              <button class="btn ghost sm" id="psa-menu">← Menu</button>
+            </div>
+            <div class="note" style="margin-top:10px">PSA cuma ngukur kalibrasi flick — presisi, peek, dan tracking tetap urusan Tes Serius. Jalanin tes buat gambaran penuh.</div>
+          </div>
+        </div>
+      </div>
+      <div class="chartbox cutS">
+        <h3>Jalur konvergensi (dibuka setelah selesai biar ga bias)</h3>
+        <div class="csub">Tiap ronde: sens yang diam-diam dites + hasil flick-mu di sens itu. 100% = mendarat pas.</div>
+        <div id="chart-psa"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    RANGE//PROTOCOL · fan-made buat latihan, ga berafiliasi sama Riot Games · engine 3D custom tanpa library · matematika sens Valorant: 0,07°/count ·
+    referensi pro: prosettings.net (Jul 2026) · metode PSA: binary search 7 ronde versi terukur · dibuat bareng Claude
+  </footer>
+</div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+(() => {
+'use strict';
+/* ================= utils ================= */
+const $ = s => document.querySelector(s);
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+const rad = d => d*Math.PI/180;
+const deg = r => r*180/Math.PI;
+const norm180 = d => { d = ((d+180)%360+360)%360-180; return d; };
+const median = a => { if(!a.length) return NaN; const s=[...a].sort((x,y)=>x-y); const m=s.length>>1;
+  return s.length%2 ? s[m] : (s[m-1]+s[m])/2; };
+const quantile = (a,q) => { if(!a.length) return NaN; const s=[...a].sort((x,y)=>x-y);
+  const p=(s.length-1)*q, lo=Math.floor(p), hi=Math.ceil(p); return s[lo]+(s[hi]-s[lo])*(p-lo); };
+const fmt = (n,d=1) => Number(n).toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtS = n => Number(n).toLocaleString('id-ID',{minimumFractionDigits:3,maximumFractionDigits:3});
+
+/* ================= matematika sens ================= */
+const YAW = 0.07;
+const M = {
+  edpi: (dpi,sens) => dpi*sens,
+  cm360: (dpi,sens) => 914.4/(YAW*dpi*sens),
+  sensForCm360: (dpi,cm) => 914.4/(YAW*dpi*cm),
+  degPerCount: sens => YAW*sens,
+  headAng: (headR,dist) => deg(Math.atan(headR/dist)),
+};
+
+/* ================= analisis flick ================= */
+function analyzeFlick(samples, required, sens, tHit) {
+  if (!samples || samples.length < 3 || Math.abs(required) < 0.5) return null;
+  const sign = Math.sign(required);
+  const BIN = 20;
+  const t0 = samples[0].t;
+  const bins = [];
+  for (const s of samples) {
+    const i = Math.floor((s.t - t0)/BIN);
+    while (bins.length <= i) bins.push(0);
+    bins[i] += s.dx * YAW * sens * sign;
+  }
+  const speed = bins.map(b => Math.abs(b)/BIN*1000);
+  const cum = []; let c = 0;
+  for (const b of bins) { c += b; cum.push(c); }
+  let start = -1;
+  for (let i=0;i<bins.length;i++) if (speed[i] > 35) { start = i; break; }
+  if (start < 0) return null;
+  let peak = 0, peakI = start;
+  for (let i=start;i<bins.length;i++) if (speed[i] > peak) { peak = speed[i]; peakI = i; }
+  if (peak < 60) return null;
+  const stopTh = Math.max(20, peak*0.15);
+  let end = bins.length-1;
+  for (let i=peakI+1;i<bins.length;i++) if (speed[i] < stopTh) { end = i; break; }
+  const flickDeg = cum[end] - (start>0 ? cum[start-1] : 0);
+  const gain = flickDeg/Math.abs(required);
+  if (!(gain > 0.2 && gain < 3)) return null;
+  let reversals = 0, prevSign = 0;
+  for (let i=end+1;i<bins.length;i++) {
+    if (speed[i] < 15) continue;
+    const s2 = Math.sign(bins[i]);
+    if (prevSign !== 0 && s2 !== 0 && s2 !== prevSign) reversals++;
+    if (s2 !== 0) prevSign = s2;
+  }
+  const tFlickEnd = t0 + (end+1)*BIN;
+  return {
+    gain: Math.round(gain*1000)/1000,
+    flickDeg: Math.round(Math.abs(flickDeg)*10)/10,
+    reactMs: Math.max(0, Math.round(t0 + start*BIN - (samples._spawn ?? t0))),
+    corrMs: tHit ? Math.max(0, Math.round(tHit - tFlickEnd)) : null,
+    reversals
+  };
+}
+
+/* ================= rekomendasi ================= */
+function recommend({flickGains, microGains, sens}) {
+  const fg = (flickGains||[]).filter(g => g>0.2 && g<3);
+  const mg = (microGains||[]).filter(g => g>0.2 && g<3);
+  const n = fg.length;
+  const medF = median(fg);
+  let g = medF;
+  if (mg.length >= 6 && isFinite(median(mg))) g = Math.exp(0.7*Math.log(medF) + 0.3*Math.log(median(mg)));
+  if (!isFinite(g) || n < 6) return { ok:false, reason:'Sampel flick valid < 6 — ulangi tesnya, usahain tiap bot mati.' };
+  const damped = Math.pow(g, 0.75);
+  const rec = Math.round(clamp(sens/damped, 0.03, 3)*1000)/1000;
+  const iqr = quantile(fg,0.75)-quantile(fg,0.25);
+  const overRate = fg.filter(x=>x>1.05).length/n;
+  const underRate = fg.filter(x=>x<0.95).length/n;
+  let type;
+  if (g >= 1.06) type='overshoot'; else if (g <= 0.94) type='undershoot'; else type='pas';
+  return { ok:true, rec, gain:g, medF, n, iqr, overRate, underRate, type };
+}
+
+/* ================= state & log ================= */
+const S = { dpi:null, sens:0.4, rawSupport:null, lockMode:null, sound:true,
+            mode:null, drill:'flick', results:null, psa:null };
+const LOG = { v:3, meta:{}, mm:{t0:0, t:[], dx:[], dy:[]}, targets:[], shots:[], kills:[], peeks:[],
+              track:{samples:[], flips:[]}, phases:[], psa:[] };
+function logReset() {
+  LOG.meta = {}; LOG.mm = {t0:0, t:[], dx:[], dy:[]}; LOG.targets=[]; LOG.shots=[]; LOG.kills=[];
+  LOG.peeks=[]; LOG.track={samples:[],flips:[]}; LOG.phases=[]; LOG.psa=[];
+}
+function logMM(t, dx, dy) {
+  if (!LOG.mm.t0) LOG.mm.t0 = t;
+  LOG.mm.t.push(Math.round((t-LOG.mm.t0)*10)/10); LOG.mm.dx.push(dx); LOG.mm.dy.push(dy);
+}
+
+/* ================= layar ================= */
+const SCREENS = ['menu','test','results','psa'];
+function show(name) {
+  SCREENS.forEach(s => { $('#screen-'+s).hidden = (s !== name); });
+  $('#btn-menu').hidden = (name === 'menu');
+  if (name === 'test') fitCanvas();
+}
+$('#btn-menu').addEventListener('click', () => { stopAll(); show('menu'); });
+
+/* ================= setup & link ================= */
+function readInputs() {
+  S.sens = clamp(parseFloat($('#in-sens').value)||0.4, 0.01, 3);
+}
+function updatePreview() {
+  readInputs();
+  $('#preview').innerHTML = `Sens <b>${fmtS(S.sens)}</b> — eDPI & cm/360 bisa dilihat di layar hasil (opsional, tinggal isi DPI di sana).`;
+}
+$('#in-sens').addEventListener('input', updatePreview);
+(function parseHash(){
+  try {
+    const h = new URLSearchParams(location.hash.replace(/^#/,''));
+    if (h.get('sens')) $('#in-sens').value = clamp(parseFloat(h.get('sens')), 0.01, 3);
+    if (h.get('dpi')) { const v = parseFloat(h.get('dpi')); if (v>=100 && v<=26000) S.dpi = Math.round(v); }
+  } catch(e){}
+})();
+$('#btn-copylink').addEventListener('click', async () => {
+  readInputs();
+  const link = location.href.split('#')[0] + `#sens=${S.sens}` + (S.dpi ? `&dpi=${S.dpi}` : '');
+  try { await navigator.clipboard.writeText(link); $('#btn-copylink').textContent = 'Kesalin ✓'; }
+  catch(e) { window.prompt('Salin manual:', link); }
+  setTimeout(()=>{ $('#btn-copylink').textContent = 'Salin link setup'; }, 1500);
+});
+
+/* ================= raw input ================= */
+(function detectRaw(){
+  const ok = 'requestPointerLock' in Element.prototype;
+  S.rawSupport = ok;
+  $('#raw-pill').innerHTML = ok
+    ? '<span class="dot" style="background:var(--good)"></span>POINTER LOCK SIAP'
+    : '<span class="dot" style="background:var(--critical)"></span>MODE TERBATAS';
+})();
+function waitLockChange(ms=450) {
+  return new Promise(res => {
+    let done = false;
+    const h = () => { if (done) return; done = true;
+      document.removeEventListener('pointerlockchange', h); res(!!document.pointerLockElement); };
+    document.addEventListener('pointerlockchange', h);
+    setTimeout(() => { if (!done) { done = true; document.removeEventListener('pointerlockchange', h); res(!!document.pointerLockElement); } }, ms);
+  });
+}
+async function lockPointer(el) {
+  if (!S.rawSupport) return { locked:false, raw:false };
+  try {
+    const p = el.requestPointerLock({ unadjustedMovement:true });
+    if (p && typeof p.then === 'function') { await p; return { locked:true, raw:true }; }
+    const got = await waitLockChange(); return { locked:got, raw:got };
+  } catch (e) {
+    try {
+      const p2 = el.requestPointerLock();
+      if (p2 && typeof p2.then === 'function') { await p2; return { locked:true, raw:false }; }
+      const got = await waitLockChange(); return { locked:got, raw:false };
+    } catch (e2) { return { locked:false, raw:false }; }
+  }
+}
+
+/* ================= suara ================= */
+/* ---- SFX ala Valorant (disintesis, tanpa file audio) ---- */
+let AC = null, noiseCache = null;
+function ac(){ AC = AC || new (window.AudioContext||window.webkitAudioContext)(); return AC; }
+function noiseBuffer(){
+  if (noiseCache) return noiseCache;
+  const a = ac(), b = a.createBuffer(1, Math.floor(a.sampleRate*0.25), a.sampleRate);
+  const d = b.getChannelData(0);
+  for (let i=0;i<d.length;i++) d[i] = Math.random()*2-1;
+  noiseCache = b; return b;
+}
+function envG(t0, v, dur){ const g = ac().createGain();
+  g.gain.setValueAtTime(v, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0+dur); return g; }
+function sfxShot() {           // crack senapan + thump badan senjata
+  if (!S.sound) return;
+  try { const a = ac(), t = a.currentTime;
+    const n = a.createBufferSource(); n.buffer = noiseBuffer();
+    const hp = a.createBiquadFilter(); hp.type='highpass'; hp.frequency.value = 850;
+    const lp = a.createBiquadFilter(); lp.type='lowpass';
+    lp.frequency.setValueAtTime(7000, t); lp.frequency.exponentialRampToValueAtTime(1100, t+0.09);
+    const g = envG(t, 0.14, 0.1);
+    n.connect(hp); hp.connect(lp); lp.connect(g); g.connect(a.destination);
+    n.start(t); n.stop(t+0.12);
+    const o = a.createOscillator(); o.type='sine';
+    o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(52, t+0.1);
+    const g2 = envG(t, 0.16, 0.12);
+    o.connect(g2); g2.connect(a.destination); o.start(t); o.stop(t+0.14);
+  } catch(e){}
+}
+function sfxDink() {           // "dink" metalik headshot
+  if (!S.sound) return;
+  try { const a = ac(), t = a.currentTime + 0.02;
+    [2793, 3520].forEach((f,i) => {
+      const o = a.createOscillator(); o.type='triangle';
+      o.frequency.setValueAtTime(f*(1+0.004*i), t);
+      o.frequency.exponentialRampToValueAtTime(f*0.93, t+0.16);
+      const g = envG(t, 0.10, 0.18);
+      o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+0.2);
+    });
+  } catch(e){}
+}
+function sfxBody() {           // thud kena badan
+  if (!S.sound) return;
+  try { const a = ac(), t = a.currentTime + 0.015;
+    const n = a.createBufferSource(); n.buffer = noiseBuffer();
+    const lp = a.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value = 520;
+    const g = envG(t, 0.12, 0.09);
+    n.connect(lp); lp.connect(g); g.connect(a.destination); n.start(t); n.stop(t+0.1);
+  } catch(e){}
+}
+function sfxKill(streak) {     // konfirmasi kill — nada naik tiap kill beruntun, 3+ dapet nada ekstra
+  if (!S.sound) return;
+  try { const a = ac(), s = Math.min(Math.max(streak,1), 6);
+    const base = 430 * Math.pow(1.125, s-1);
+    const notes = [ [0, base], [0.085, base*1.335] ];
+    if (s >= 3) notes.push([0.17, base*1.78]);
+    for (const [dt, f] of notes) {
+      const t = a.currentTime + 0.07 + dt;
+      const o = a.createOscillator(); o.type='square'; o.frequency.value = f;
+      const lp = a.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value = 2600;
+      const g = envG(t, 0.05, 0.17);
+      o.connect(lp); lp.connect(g); g.connect(a.destination); o.start(t); o.stop(t+0.19);
+    }
+  } catch(e){}
+}
+$('#btn-sound').addEventListener('click', () => {
+  S.sound = !S.sound; $('#btn-sound').textContent = S.sound ? '🔊' : '🔇';
+});
+/* ================= engine 3D ================= */
+const cv = $('#cv'), ctx = cv.getContext('2d');
+const stage = $('#stage');
+let W = 0, H = 0, DPR = 1, F = 0;
+const EYE = 1.6;
+function fitCanvas() {
+  const r = stage.getBoundingClientRect();
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.round(r.width); H = Math.round(r.height);
+  cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  F = (W/2)/Math.tan(rad(51.5));
+}
+window.addEventListener('resize', fitCanvas);
+document.addEventListener('fullscreenchange', fitCanvas);
+function toggleFS() {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else stage.requestFullscreen?.();
+}
+$('#btn-fs').addEventListener('click', toggleFS);
+document.addEventListener('keydown', e => {
+  if (e.code === 'KeyF' && !$('#screen-test').hidden) { e.preventDefault(); toggleFS(); }
+});
+
+const cam = { yaw:0, pitch:0 };
+const ENG = { sens: 0.4 };          // sens efektif engine — PSA ngubah ini diam-diam
+function view(x, y, z) {
+  const yv0 = y - EYE;
+  const cy = Math.cos(rad(cam.yaw)), sy = Math.sin(rad(cam.yaw));
+  const xv = x*cy - z*sy;
+  const zv1 = x*sy + z*cy;
+  const cp = Math.cos(rad(cam.pitch)), sp = Math.sin(rad(cam.pitch));
+  const yv = yv0*cp - zv1*sp;
+  const zv = yv0*sp + zv1*cp;
+  return { x:xv, y:yv, z:zv };
+}
+function proj(v) { return { x: W/2 + F*v.x/v.z, y: H/2 - F*v.y/v.z, z: v.z }; }
+function projW(x,y,z) { const v = view(x,y,z); return v.z > 0.15 ? proj(v) : null; }
+function yawOf(x,z) { return deg(Math.atan2(x, z)); }
+function pitchOf(x,y,z) { return deg(Math.atan2(y-EYE, Math.hypot(x,z))); }
+function clipSeg(a, b) {
+  const NZ = 0.18;
+  let va = view(a[0],a[1],a[2]), vb = view(b[0],b[1],b[2]);
+  if (va.z < NZ && vb.z < NZ) return null;
+  if (va.z < NZ || vb.z < NZ) {
+    const t = (NZ - va.z)/(vb.z - va.z);
+    const m = { x: va.x+(vb.x-va.x)*t, y: va.y+(vb.y-va.y)*t, z: NZ };
+    if (va.z < NZ) va = m; else vb = m;
+  }
+  return [proj(va), proj(vb)];
+}
+
+/* ---------- dunia ---------- */
+const BOT = { headR:0.11, bodyR:0.27, headY:1.62, shoulderY:1.42, hp:2 };
+const CRATES = [ {x:-9, z:24, w:1.7, d:1.7, h:1.5}, {x:10, z:28, w:2.0, d:1.6, h:2.1},
+                 {x:-16, z:33, w:2.2, d:1.8, h:1.8}, {x:16, z:20, w:1.6, d:1.6, h:1.2} ];
+const PEEK_COVERS = [ {th:-16, d:13}, {th:0, d:14}, {th:16, d:13} ]
+  .map(c => ({ x: Math.sin(rad(c.th))*c.d, z: Math.cos(rad(c.th))*c.d, th:c.th, d:c.d, w:1.5, dd:0.5, h:2.15 }));
+
+/* ---------- konfigurasi mode ---------- */
+const TEST_BLOCKS = [
+  { key:'flick', name:'BLOK 1 // FLICK 1-TAP', n:30, warm:3, off:[8,38], dist:[10,30], timeout:3000,
+    intro:'30 bot diam di jarak 10–30 m. <b>Headshot = mati</b>, badan 2 peluru. Tiga bot pertama pemanasan (ga dihitung).' },
+  { key:'micro', name:'BLOK 2 // MICRO PRESISI', n:20, warm:2, off:[2,7], dist:[14,26], timeout:2600,
+    intro:'Target deket crosshair — ngetes koreksi halus & kontrol jari. Pelan boleh, yang penting satu tap satu kepala.' },
+  { key:'peek', name:'BLOK 3 // PEEK DUEL', n:16, window:850, adapt:true,
+    intro:'Bot ngintip dari cover. Jendelanya <b>nyempit tiap kamu menang</b> — simulasi tekanan duel beneran.' },
+  { key:'track', name:'BLOK 4 // STRAFE TRACKING', dur:45000,
+    intro:'45 detik nempelin crosshair ke kepala bot yang strafing ADAD. Boleh sambil nembak buat latihan spray.' },
+];
+const PRACTICE_DRILLS = {
+  flick: { key:'flick', name:'LATIHAN // FLICK', endless:true, warm:0, off:[8,38], dist:[10,30], timeout:3000,
+    intro:'Flick bebas tanpa batas. ESC buat pause/selesai.' },
+  micro: { key:'micro', name:'LATIHAN // MICRO', endless:true, warm:0, off:[2,7], dist:[14,26], timeout:2600,
+    intro:'Micro presisi tanpa batas. Fokus: berhenti PAS di kepala, bukan cepet-cepetan.' },
+  peek:  { key:'peek', name:'LATIHAN // PEEK', endless:true, window:750, adapt:false,
+    intro:'Peek duel jendela tetap 750 ms. ESC buat pause/selesai.' },
+  track: { key:'track', name:'LATIHAN // TRACKING', endless:true, dur:45000,
+    intro:'Tracking tanpa batas (lap 45 dtk). Mantra: pelan itu mulus, mulus itu cepat.' },
+};
+const DRILL_DESC = {
+  flick:'Ngasah flick pertama & TTK.', micro:'Ngasah koreksi halus — obat buat yang miss tipis.',
+  peek:'Ngasah reaksi & aim di bawah tekanan.', track:'Ngasah smooth-pursuit & recovery ganti arah.',
+};
+const PSA_CFG = { flicksPerRound:8, warm:1, maxRounds:7, off:[10,35], dist:[12,26], timeout:3000 };
+
+/* ---------- runtime ---------- */
+const T = { running:false, paused:true, fallback:false, prevX:null, prevY:null,
+            lockCooldownUntil:0, _pausedAt:0, blockIdx:-1, block:null, count:0, spawnAt:0 };
+const R3 = { flick:[], micro:[], peekKills:0, misses:0, clicksAll:0, clicksHit:0 };
+const P = { kills:0, shots:0, hits:0, streak:0, best:0, ttkSum:0, hsCount:0 };   // live latihan
+const FX = { rings:[], decals:[], dmg:[], trace:0, hm:0, hmHead:false };
+let bot = null, peek = null, track = null;
+let PSA = null;
+let psaRoundGains = [];
+
+function mkBot(th, dist, kind) {
+  const x = Math.sin(rad(th))*dist, z = Math.cos(rad(th))*dist;
+  const b = { id: LOG.targets.length+1, kind, x, z, dist, th,
+    hp:BOT.hp, alive:true, deadT:0, flashT:0, bornT:performance.now(),
+    samples:[], required:0, firstShotT:0, shotsFired:0, warm:false,
+    lat:0, latVel:0, outOff:0, laneX:Math.cos(rad(th)), laneZ:-Math.sin(rad(th)) };
+  b.samples._spawn = b.bornT;
+  LOG.targets.push({ id:b.id, phase:T.block?.key, t:Math.round(b.bornT), th:Math.round(th*10)/10,
+    dist:Math.round(dist*10)/10, headAng:Math.round(M.headAng(BOT.headR,dist)*100)/100, kind });
+  return b;
+}
+function botPos(b) { return { x: b.x + b.laneX*b.lat, z: b.z + b.laneZ*b.lat }; }
+function headAngOf(b) { const p = botPos(b); return M.headAng(BOT.headR, Math.hypot(p.x,p.z)); }
+function offsetsTo(b) {
+  const p = botPos(b);
+  return { offYaw: norm180(cam.yaw - yawOf(p.x,p.z)), offPitch: cam.pitch - pitchOf(p.x,BOT.headY,p.z),
+           headAng: headAngOf(b), dist: Math.hypot(p.x,p.z) };
+}
+
+/* ---------- spawn per jenis ---------- */
+function spawnStill() {
+  const bl = T.block;
+  const side = Math.random() < 0.5 ? -1 : 1;
+  const off = side*(bl.off[0] + Math.random()*(bl.off[1]-bl.off[0]));
+  const dist = bl.dist[0] + Math.random()*(bl.dist[1]-bl.dist[0]);
+  bot = mkBot(cam.yaw + off, dist, 'still');
+  bot.required = off;
+  bot.warm = T.count < (bl.warm||0);
+  T.spawnAt = 0;
+}
+function endStillBot(hit, hs) {
+  const now = performance.now();
+  const bl = T.block;
+  if (!bot.warm) {
+    const a = analyzeFlick(bot.samples, bot.required, ENG.sens, hit ? now : null);
+    const rec = { req:Math.abs(bot.required), dir:Math.sign(bot.required), dist:bot.dist,
+      a, ttk: hit ? Math.round(now-bot.bornT) : null, shots:bot.shotsFired, hs:!!hs, hit, blockKey:bl.key };
+    if (bl.psa) { if (a && a.gain != null) psaRoundGains.push(a.gain); }
+    else (bl.key === 'micro' ? R3.micro : R3.flick).push(rec);
+  }
+  if (hit) {
+    LOG.kills.push({ t:Math.round(now), tid:bot.id, ttk:Math.round(now-bot.bornT), shots:bot.shotsFired, hs:!!hs });
+    P.kills++; P.streak++; P.best = Math.max(P.best, P.streak); P.ttkSum += now-bot.bornT; if (hs) P.hsCount++;
+    sfxKill(P.streak);
+  } else { P.streak = 0; }
+  bot = null; T.count++;
+  const done = !bl.endless && T.count >= (bl.psa ? PSA_CFG.flicksPerRound : bl.n);
+  if (done) { if (bl.psa) psaRoundDone(); else nextBlock(); }
+  else T.spawnAt = now + 360 + Math.random()*380;
+}
+
+/* ---------- peek ---------- */
+function startPeekRep() {
+  const cover = PEEK_COVERS[(T.count + Math.floor(Math.random()*3)) % 3];
+  const dir = Math.random() < 0.5 ? -1 : 1;
+  bot = mkBot(cover.th, cover.d + 0.9, 'peek');
+  bot.outOff = dir * (cover.w/2 + 0.62);
+  bot.lat = 0;
+  const pe = { x: bot.x + bot.laneX*bot.outOff, z: bot.z + bot.laneZ*bot.outOff };
+  bot.required = norm180(yawOf(pe.x, pe.z) - cam.yaw);
+  peek = { state:'idle', t: performance.now() + 480 + Math.random()*650, cover, dir,
+           window: peek ? peek.window : T.block.window, exposedAt:0, reacted:0 };
+}
+function updatePeek(now) {
+  if (!bot || !peek) return;
+  const Pk = peek;
+  if (Pk.state === 'idle' && now >= Pk.t) {
+    Pk.state = 'out'; Pk.t = now + 140; Pk.exposedAt = now;
+    bot.samples = []; bot.samples._spawn = now; bot.bornT = now;
+  }
+  else if (Pk.state === 'out') {
+    const k = clamp(1 - (Pk.t - now)/140, 0, 1);
+    bot.lat = bot.outOff*k;
+    if (now >= Pk.t) { Pk.state='exposed'; bot.lat = bot.outOff; Pk.t = now + Pk.window; }
+  } else if (Pk.state === 'exposed' && now >= Pk.t) { Pk.state='back'; Pk.t = now + 140; }
+  else if (Pk.state === 'back') {
+    const k = clamp(1 - (Pk.t - now)/140, 0, 1);
+    bot.lat = bot.outOff*(1-k);
+    if (now >= Pk.t) {
+      LOG.peeks.push({ t:Math.round(now), tid:bot.id, window:Math.round(Pk.window), killed:false,
+        reactMs: Pk.reacted ? Math.round(Pk.reacted-Pk.exposedAt) : null, ttkMs:null });
+      if (T.block.adapt) peek.window = clamp(Pk.window + 80, 480, 1100);
+      P.streak = 0;
+      bot = null; T.count++;
+      if (!T.block.endless && T.count >= T.block.n) nextBlock(); else startPeekRep();
+    }
+  }
+}
+function peekKilled(now, hs) {
+  LOG.peeks.push({ t:Math.round(now), tid:bot.id, window:Math.round(peek.window), killed:true,
+    reactMs: peek.reacted ? Math.round(peek.reacted-peek.exposedAt) : null,
+    ttkMs: Math.round(now - peek.exposedAt) });
+  LOG.kills.push({ t:Math.round(now), tid:bot.id, ttk:Math.round(now-peek.exposedAt), shots:bot.shotsFired, hs:!!hs });
+  R3.peekKills++; P.kills++; P.streak++; P.best = Math.max(P.best,P.streak); if (hs) P.hsCount++;
+  sfxKill(P.streak);
+  if (T.block.adapt) peek.window = clamp(peek.window - 60, 480, 1100);
+  bot = null; T.count++;
+  if (!T.block.endless && T.count >= T.block.n) nextBlock(); else startPeekRep();
+}
+
+/* ---------- tracking ---------- */
+function startTrack(now) {
+  bot = mkBot(cam.yaw, 16, 'strafe');
+  bot.latVel = 4.2;
+  track = { end: now + (T.block.dur||45000), nextFlip: now + 700, lastSample: 0,
+            recovering:false, flipT:0 };
+}
+function updateTrack(now, dt) {
+  if (!bot || !track) return;
+  if (now >= track.nextFlip) {
+    bot.latVel = -Math.sign(bot.latVel) * (3.4 + Math.random()*2.2);
+    track.nextFlip = now + 420 + Math.random()*780;
+    LOG.track.flips.push({ t:Math.round(now), recovMs:null });
+    track.recovering = true; track.flipT = now;
+  }
+  bot.lat += bot.latVel*dt;
+  if (Math.abs(bot.lat) > 5.5) { bot.lat = Math.sign(bot.lat)*5.5; bot.latVel = -bot.latVel; }
+  let rel = norm180(botPos(bot).x !== undefined ? yawOf(botPos(bot).x, botPos(bot).z) - cam.yaw : 0);
+  if (Math.abs(rel) > 50) { const p0 = botPos(bot); bot.x = Math.sin(rad(cam.yaw+ (rel>0?18:-18)))*16; bot.z = Math.cos(rad(cam.yaw+(rel>0?18:-18)))*16; bot.lat = 0; }
+  const o = offsetsTo(bot);
+  const err = Math.hypot(o.offYaw, o.offPitch);
+  if (track.recovering && err <= o.headAng*1.5) {
+    track.recovering = false;
+    const f = LOG.track.flips[LOG.track.flips.length-1];
+    if (f && f.recovMs == null) f.recovMs = Math.round(now - track.flipT);
+  }
+  if (now - track.lastSample >= 33) {
+    track.lastSample = now;
+    LOG.track.samples.push({ t:Math.round(now), err:Math.round(err*1000)/1000,
+      off:Math.round(o.offYaw*1000)/1000, hA:Math.round(o.headAng*1000)/1000,
+      vs: Math.sign(bot.latVel)||1 });
+  }
+  if (now >= track.end) {
+    if (T.block.endless) { track.end = now + (T.block.dur||45000); }   // lap baru
+    else { bot = null; nextBlock(); }
+  }
+}
+
+/* ---------- overlay & alur ---------- */
+let ovActions = null;
+function overlay(title, text, opts = {}) {
+  $('#ov-title').innerHTML = title;
+  $('#ov-text').innerHTML = text;
+  $('#ov-hint').textContent = opts.hint ?? 'Klik di mana aja buat lanjut';
+  $('#ov-hint').style.display = opts.hint === null ? 'none' : '';
+  const hasBtns = !!opts.btns;
+  $('#ov-btns').hidden = !hasBtns;
+  if (hasBtns) {
+    $('#ov-primary').textContent = opts.btns[0];
+    $('#ov-secondary').textContent = opts.btns[1] || '';
+    $('#ov-secondary').style.display = opts.btns[1] ? '' : 'none';
+    ovActions = { p: opts.onPrimary, s: opts.onSecondary, anywhere: !!opts.anywhere };
+  } else ovActions = null;
+  $('#overlay').hidden = false;
+  T.paused = true;
+  FIRE.held = false;
+}
+async function resumeFromPause() {
+  const now = performance.now();
+  if (!document.pointerLockElement && S.lockMode !== 'fallback') {
+    if (now < T.lockCooldownUntil) {
+      $('#ov-hint').style.display = '';
+      $('#ov-hint').textContent = `Cooldown Chrome — coba lagi ${((T.lockCooldownUntil-now)/1000).toFixed(1)} detik lagi`;
+      return;
+    }
+    const r = await lockPointer(stage);
+    if (!r.locked) { $('#ov-hint').style.display = ''; $('#ov-hint').textContent = 'Belum ke-lock — klik sekali lagi'; return; }
+    S.lockMode = r.raw ? 'raw' : 'lock';
+    LOG.meta.lockMode = S.lockMode;
+    updateRawHud();
+  }
+  if (S.lockMode === 'fallback') T.prevX = null;
+  const gap = T._pausedAt ? (now - T._pausedAt) : 0; T._pausedAt = 0;
+  hideOverlay();
+  if (!T.block) return;
+  if (T.block.key === 'peek') startPeekRep();
+  else if (T.block.key === 'track') {
+    if (!track) startTrack(now);
+    else if (gap > 0) { track.end += gap; track.nextFlip += gap; }
+  } else {
+    if (bot && gap > 0) bot = null;
+    if (!bot) T.spawnAt = now + 450;
+  }
+}
+function pauseOverlay() {
+  overlay('PAUSE', 'Kena ESC / mouse kelepas. Target yang kepotong ga dihitung — datamu aman. Catatan: setelah ESC, Chrome ngasih cooldown ±1,5 detik sebelum mouse bisa di-lock lagi.',
+    { btns:['▶ Lanjut','✕ Ke menu'], anywhere:true, hint:'klik di mana aja juga bisa',
+      onPrimary: resumeFromPause,
+      onSecondary: () => { stopAll(); show('menu'); } });
+}
+function hideOverlay(){ $('#overlay').hidden = true; T.paused = false; }
+$('#ov-primary').addEventListener('click', e => { e.stopPropagation(); ovActions?.p?.(); });
+$('#ov-secondary').addEventListener('click', e => { e.stopPropagation(); ovActions?.s?.(); });
+
+function stopAll() {
+  T.running = false; bot = null; peek = null; track = null; PSA = null;
+  document.exitPointerLock?.();
+  if (document.fullscreenElement) document.exitFullscreen?.();
+}
+$('#btn-abort').addEventListener('click', () => { stopAll(); show('menu'); });
+
+function resetSession(modeName) {
+  readInputs(); logReset();
+  R3.flick=[]; R3.micro=[]; R3.peekKills=0; R3.misses=0; R3.clicksAll=0; R3.clicksHit=0;
+  P.kills=0; P.shots=0; P.hits=0; P.streak=0; P.best=0; P.ttkSum=0; P.hsCount=0;
+  FX.rings=[]; FX.decals=[]; FX.dmg=[]; FX.hm=0; FX.trace=0;
+  ENG.sens = S.sens;
+  cam.yaw = 0; cam.pitch = 0;
+  LOG.meta = { app:'range-protocol', v:3, mode:modeName, ts:Date.now(), dpi:S.dpi, sens:S.sens,
+    ua:navigator.userAgent.slice(0,80) };
+  T.blockIdx = -1; T.block = null; T.count = 0; T.spawnAt = 0;
+  T.running = true; T.fallback = false; bot = null; peek = null; track = null;
+  show('test'); fitCanvas();
+  lastT = 0;
+  requestAnimationFrame(loop);
+}
+
+function startTest() {
+  S.mode = 'test';
+  resetSession('test');
+  T.blocks = TEST_BLOCKS.map(b => ({...b}));
+  overlay('MASUK <b>RANGE</b>',
+    `Tes Serius: 4 blok, ±7 menit, jangan setengah-setengah.<br>Sens <b>${fmtS(S.sens)}</b> · klik = nembak, <b>tahan = spray</b> (3 peluru pertama akurat, sisanya melebar).`,
+    { hint:'Klik area game buat lock mouse & mulai' });
+}
+function startPractice(drill) {
+  S.mode = 'practice';
+  resetSession('practice-'+drill);
+  T.blocks = [ {...PRACTICE_DRILLS[drill]} ];
+  overlay(PRACTICE_DRILLS[drill].name.replace('//','<b>//</b>'), PRACTICE_DRILLS[drill].intro,
+    { hint:'Klik area game buat mulai' });
+}
+function startPSA() {
+  S.mode = 'psa';
+  resetSession('psa');
+  PSA = { round:0, lo:null, hi:null, cur:S.sens, results:[], done:false };
+  psaRoundGains = [];
+  T.blocks = [ mkPsaBlock(1) ];
+  overlay('CARI SENS <b>OTOMATIS</b>',
+    `Gampang: tembak bot kayak biasa, ${PSA_CFG.maxRounds} ronde × ${PSA_CFG.flicksPerRound} flick (±4 menit). Tiap ronde aku <b>diam-diam ganti sens-mu</b> dan ngukur flick kamu kelewatan atau kependekan — dari situ angkanya makin lama makin sempit sampai ketemu yang paling pas. Jangan mikir, flick natural aja.<br><span style="color:var(--muted)">Basis: metode PSA klasik (bracket 0,5×–1,5×, konvergen ±5%) — versi terukur, bukan perasaan.</span>`,
+    { hint:'Klik area game buat mulai ronde 1' });
+}
+function mkPsaBlock(no) {
+  return { key:'flick', psa:true, name:`RONDE ${no}/${PSA_CFG.maxRounds}`, n:PSA_CFG.flicksPerRound,
+    warm:PSA_CFG.warm, off:PSA_CFG.off, dist:PSA_CFG.dist, timeout:PSA_CFG.timeout };
+}
+function psaRoundDone() {
+  const g = median(psaRoundGains);
+  const n = psaRoundGains.length;
+  PSA.results.push({ round:PSA.round+1, sens:PSA.cur, gain: isFinite(g)?Math.round(g*1000)/1000:null, n });
+  LOG.psa = PSA.results;
+  // update bracket
+  if (PSA.round === 0) {
+    if (!isFinite(g)) { PSA.lo = PSA.cur/1.5; PSA.hi = PSA.cur*1.5; }
+    else if (g > 1.02) { PSA.lo = PSA.cur*0.5; PSA.hi = PSA.cur; }
+    else if (g < 0.98) { PSA.lo = PSA.cur; PSA.hi = PSA.cur*1.5; }
+    else { PSA.lo = PSA.cur/1.15; PSA.hi = PSA.cur*1.15; }
+  } else if (isFinite(g)) {
+    if (g > 1.03) PSA.hi = PSA.cur;
+    else if (g < 0.97) PSA.lo = PSA.cur;
+    else { PSA.lo = Math.max(PSA.lo, PSA.cur/1.05); PSA.hi = Math.min(PSA.hi, PSA.cur*1.05); } // gain udah pas ±3% → kunci di sini
+  }
+  PSA.round++;
+  psaRoundGains = [];
+  const converged = PSA.hi/PSA.lo <= 1.11;
+  if (PSA.round >= PSA_CFG.maxRounds || converged) { finishPSA(); return; }
+  PSA.cur = Math.sqrt(PSA.lo*PSA.hi);
+  ENG.sens = PSA.cur;
+  T.blocks = [ mkPsaBlock(PSA.round+1) ];
+  T.blockIdx = -1; T.count = 0; bot = null;
+  overlay(`RONDE <b>${PSA.round+1}</b>/${PSA_CFG.maxRounds}`,
+    'Sens diganti diam-diam. Reset posisi mouse ke tengah pad, terus flick natural kayak biasa.',
+    { hint:'Klik buat lanjut' });
+}
+function finishPSA() {
+  PSA.final = Math.round(Math.sqrt(PSA.lo*PSA.hi)*1000)/1000;
+  PSA.band = Math.round((Math.sqrt(PSA.hi/PSA.lo)-1)*100);
+  PSA.done = true;
+  S.psa = PSA;
+  ENG.sens = S.sens;
+  stopAll();
+  renderPSAResults();
+  show('psa');
+}
+
+function nextBlock() {
+  T.blockIdx++; T.count = 0; bot = null; peek = null; track = null;
+  if (!T.blocks || T.blockIdx >= T.blocks.length) {
+    if (S.mode === 'test') { T.running=false; stopAll(); computeAndShowResults(); }
+    return;
+  }
+  T.block = T.blocks[T.blockIdx];
+  LOG.phases.push({ name:T.block.key + (T.block.psa?('-psa'+(PSA?PSA.round+1:'')):''), t:Math.round(performance.now()) });
+  $('#hud-phase').textContent = T.block.name;
+  $('#hud-hint').textContent = T.block.key==='track' ? 'Tempel crosshair ke kepala · boleh spray · ESC pause' : 'Klik = nembak · tahan = spray · ESC pause';
+  if (S.mode === 'test') overlay(T.block.name.replace('//','<b>//</b>'), T.block.intro || 'Gas.', {});
+  else hideAndArm();
+}
+function hideAndArm() {
+  hideOverlay();
+  const now = performance.now();
+  if (T.block.key === 'peek') startPeekRep();
+  else if (T.block.key === 'track') startTrack(now);
+  else T.spawnAt = now + 450;
+}
+
+/* ---------- input ---------- */
+function updateRawHud() {
+  const el = $('#hud-raw');
+  if (S.lockMode === 'raw') el.innerHTML = '<span class="dot" style="background:var(--good)"></span>RAW INPUT';
+  else if (S.lockMode === 'lock') el.innerHTML = '<span class="dot" style="background:var(--warn)"></span>LOCK NON-RAW';
+  else el.innerHTML = '<span class="dot" style="background:var(--critical)"></span>MODE TERBATAS';
+  $('#test-note').textContent =
+    S.lockMode === 'raw' ? 'Raw input aktif — gerakan kebaca langsung dari sensor, setara in-game.' :
+    S.lockMode === 'lock' ? 'Pointer lock tanpa unadjustedMovement — pastiin Enhance Pointer Precision OFF.' :
+    'Pointer lock ga tersedia di viewer ini — buat data akurat, download file & buka langsung di Chrome/Edge.';
+}
+const FIRE = { held:false, iv:102, n:0, lastShot:0 };   // full-auto ±9,8 peluru/detik ala Vandal
+function fireOnce(now) {
+  if (T.paused || !T.running || !T.block) return;
+  const spread = FIRE.n < 3 ? 0 : Math.min(0.5, (FIRE.n-2)*0.09);  // 3 peluru pertama akurat, habis itu bloom
+  shoot(now, spread);
+  FIRE.n++; FIRE.lastShot = now;
+}
+document.addEventListener('mouseup', () => { FIRE.held = false; });
+
+function shoot(now, spread = 0) {
+  R3.clicksAll++; P.shots++;
+  FX.trace = now;
+  sfxShot();
+  const devY = (Math.random()*2-1)*spread, devP = (Math.random()*2-1)*spread*0.9;
+  if (bot && bot.alive) {
+    const o = offsetsTo(bot);
+    const effYaw = o.offYaw + devY, effPitch = o.offPitch + devP;
+    const errAng = Math.hypot(effYaw, effPitch);
+    const p = botPos(bot);
+    const bodyAng = deg(Math.atan(BOT.bodyR/o.dist));
+    const pFeet = pitchOf(p.x, 0.12, p.z), pNeck = pitchOf(p.x, BOT.shoulderY, p.z);
+    let res = 'miss';
+    if (errAng <= o.headAng*1.05) res = 'head';
+    else if (Math.abs(effYaw) <= bodyAng && (cam.pitch+devP) >= pFeet && (cam.pitch+devP) <= pNeck) res = 'body';
+    const exposed = bot.kind !== 'peek' || Math.abs(bot.lat) > Math.abs(bot.outOff||1)*0.35;
+    if (!exposed) res = 'blocked';
+    LOG.shots.push({ t:Math.round(now), tid:bot.id, res,
+      offYaw:Math.round(effYaw*1000)/1000, offPitch:Math.round(effPitch*1000)/1000,
+      headAng:Math.round(o.headAng*1000)/1000, dist:Math.round(o.dist*10)/10,
+      phase:(T.block?.psa?'psa':T.block?.key) });
+    bot.shotsFired++;
+    if (!bot.firstShotT) bot.firstShotT = now;
+    if (res === 'head') {
+      R3.clicksHit++; P.hits++;
+      FX.hm = now; FX.hmHead = true;
+      FX.rings.push({ t:now, x:p.x, y:BOT.headY, z:p.z, head:true });
+      FX.dmg.push({ t:now, x:p.x, y:BOT.headY+0.25, z:p.z, txt:'160', col:'#8df0dd' });
+      sfxDink();
+      if (bot.kind === 'strafe') { bot.flashT = now; return; }
+      bot.alive = false; bot.deadT = now;
+      if (bot.kind === 'still') endStillBot(true, true);
+      else if (bot.kind === 'peek') peekKilled(now, true);
+      return;
+    }
+    if (res === 'body') {
+      R3.clicksHit++; P.hits++;
+      FX.hm = now; FX.hmHead = false;
+      FX.rings.push({ t:now, x:p.x, y:1.1, z:p.z, head:false });
+      FX.dmg.push({ t:now, x:p.x, y:1.35, z:p.z, txt:'40', col:'#ece8e1' });
+      sfxBody();
+      bot.flashT = now;
+      if (bot.kind !== 'strafe') {
+        bot.hp--;
+        if (bot.hp <= 0) {
+          bot.alive = false; bot.deadT = now;
+          if (bot.kind === 'still') endStillBot(true, false);
+          else if (bot.kind === 'peek') peekKilled(now, false);
+        }
+      }
+      return;
+    }
+  } else {
+    LOG.shots.push({ t:Math.round(now), tid:null, res:'miss', offYaw:null, offPitch:null,
+      headAng:null, dist:null, phase:(T.block?.psa?'psa':T.block?.key) });
+  }
+  R3.misses++; P.streak = 0;
+  const fy = rad(cam.yaw), fp = rad(cam.pitch), dd = 34;
+  FX.decals.push({ t:now, x:Math.sin(fy)*Math.cos(fp)*dd, y:EYE+Math.sin(fp)*dd, z:Math.cos(fy)*Math.cos(fp)*dd });
+  if (FX.decals.length > 14) FX.decals.shift();
+}
+stage.addEventListener('mousedown', async e => {
+  if ($('#screen-test').hidden) return;
+  if (e.target.closest('#ov-btns') || e.target.closest('.tr')) return;
+  e.preventDefault();
+  const now = performance.now();
+  if (T.paused) {
+    if (ovActions) { if (ovActions.anywhere && ovActions.p) ovActions.p(); return; }
+    if (!document.pointerLockElement) {
+      if (now < T.lockCooldownUntil) {
+        $('#ov-hint').textContent = `Cooldown Chrome — coba lagi ${((T.lockCooldownUntil-now)/1000).toFixed(1)} detik lagi`;
+        return;
+      }
+      const r = await lockPointer(stage);
+      if (r.locked) S.lockMode = r.raw ? 'raw' : 'lock';
+      else { S.lockMode = 'fallback'; T.fallback = true; T.prevX = e.clientX; T.prevY = e.clientY; }
+      LOG.meta.lockMode = S.lockMode;
+      updateRawHud();
+    }
+    if (T.blockIdx < 0) { nextBlock(); if ($('#overlay').hidden) hideAndArm(); return; }
+    const gap = T._pausedAt ? (now - T._pausedAt) : 0; T._pausedAt = 0;
+    hideOverlay();
+    if (T.block.key === 'peek') {
+      if (!bot || gap > 0) startPeekRep();
+    } else if (T.block.key === 'track') {
+      if (!track) startTrack(now);
+      else if (gap > 0) { track.end += gap; track.nextFlip += gap; }
+    } else {
+      if (bot && gap > 0) bot = null;
+      if (!bot) T.spawnAt = now + 450;
+    }
+    return;
+  }
+  FIRE.held = true;
+  if (now - FIRE.lastShot > 260) FIRE.n = 0;   // burst baru → bloom reset
+  fireOnce(now);
+});
+stage.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('mousemove', e => {
+  if ($('#screen-test').hidden || !T.running || T.paused) return;
+  let dx = 0, dy = 0;
+  if (document.pointerLockElement === stage || document.pointerLockElement === cv) {
+    dx = e.movementX; dy = e.movementY;
+  } else if (T.fallback) {
+    if (T.prevX == null) { T.prevX = e.clientX; T.prevY = e.clientY; return; }
+    dx = e.clientX - T.prevX; dy = e.clientY - T.prevY;
+    T.prevX = e.clientX; T.prevY = e.clientY;
+  } else return;
+  if (Math.abs(dx) > 600 || Math.abs(dy) > 600) return;
+  const k = M.degPerCount(ENG.sens);
+  cam.yaw += dx*k;
+  cam.pitch = clamp(cam.pitch - dy*k, -40, 40);
+  logMM(e.timeStamp, dx, dy);
+  if (bot && bot.samples && (bot.kind !== 'peek' || (peek && peek.state !== 'idle'))) {
+    bot.samples.push({ t:e.timeStamp, dx });
+    if (peek && (peek.state === 'out' || peek.state === 'exposed') && !peek.reacted && (Math.abs(dx)+Math.abs(dy)) > 3) peek.reacted = e.timeStamp;
+  }
+});
+document.addEventListener('pointerlockchange', () => {
+  if ($('#screen-test').hidden || !T.running) return;
+  if (!document.pointerLockElement) {
+    T.lockCooldownUntil = performance.now() + 1400;
+    T._pausedAt = performance.now();
+    FIRE.held = false;
+    pauseOverlay();
+  }
+});
+
+/* ---------- loop & render ---------- */
+let lastT = 0;
+function loop(t) {
+  if (!T.running) return;
+  const dt = Math.min(0.05, (t-lastT)/1000 || 0.016); lastT = t;
+  const now = performance.now();
+  if (!T.paused && T.block) {
+    if (FIRE.held && now - FIRE.lastShot >= FIRE.iv) fireOnce(now);   // full-auto
+    if (T.block.key === 'peek') {
+      updatePeek(now);
+      const nTot = T.block.endless ? '∞' : T.block.n;
+      $('#hud-prog').textContent = `peek ${T.block.endless?P.kills+' kill':Math.min(T.count+1,T.block.n)+'/'+nTot} · window ${peek?Math.round(peek.window):T.block.window} ms · streak ${P.streak}`;
+    } else if (T.block.key === 'track') {
+      updateTrack(now, dt);
+      const ts = LOG.track.samples;
+      const recent = ts.slice(-200);
+      const on = recent.length ? Math.round(recent.filter(s0=>s0.err<=s0.hA*1.6).length/recent.length*100) : 0;
+      const left = track && !T.block.endless ? ` · sisa ${Math.max(0,(track.end-now)/1000).toFixed(0)} dtk` : '';
+      $('#hud-prog').textContent = `nempel ${on}%${left}`;
+    } else {
+      if (!bot && T.spawnAt && now >= T.spawnAt) spawnStill();
+      if (bot && !bot.warm && now - bot.bornT > (T.block.timeout||3000)) {
+        bot.alive = false; bot.deadT = now; endStillBot(false, false);
+      } else if (bot && bot.warm && now - bot.bornT > (T.block.timeout||3000)) {
+        bot = null; T.count++; T.spawnAt = now + 400;
+      }
+      const acc = P.shots ? Math.round(P.hits/P.shots*100) : 0;
+      const nTot = T.block.psa ? PSA_CFG.flicksPerRound : (T.block.endless ? '∞' : T.block.n);
+      $('#hud-prog').textContent = (T.block.endless
+        ? `kill ${P.kills} · akurasi ${acc}% · streak ${P.streak} (best ${P.best})`
+        : `bot ${Math.min(T.count+1, T.block.psa?PSA_CFG.flicksPerRound:T.block.n)}/${nTot} · akurasi ${acc}%`);
+    }
+  }
+  render(now);
+  requestAnimationFrame(loop);
+}
+
+function render(now) {
+  // langit
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#79b7cc'); g.addColorStop(0.5,'#b7d6d2'); g.addColorStop(0.78,'#e8dcc0'); g.addColorStop(1,'#d8d2be');
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+  const horizonY = clamp(H/2 + F*Math.tan(rad(cam.pitch)), -3000, 5000);
+  const gg = ctx.createLinearGradient(0,horizonY,0,H);
+  gg.addColorStop(0,'#cbc0a3'); gg.addColorStop(1,'#a3967a');
+  ctx.fillStyle = gg; ctx.fillRect(0, Math.max(0,horizonY), W, H);
+  // lane tengah
+  const lane = [[-3,0.01,2],[3,0.01,2],[3,0.01,42],[-3,0.01,42]].map(p=>projW(...p));
+  if (lane.every(Boolean)) {
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    ctx.beginPath(); ctx.moveTo(lane[0].x,lane[0].y);
+    for (let i=1;i<4;i++) ctx.lineTo(lane[i].x,lane[i].y);
+    ctx.closePath(); ctx.fill();
+  }
+  // grid
+  ctx.lineWidth = 1;
+  for (let gx=-24; gx<=24; gx+=3) {
+    const s = clipSeg([gx,0,1],[gx,0,42]); if (!s) continue;
+    ctx.strokeStyle = 'rgba(95,82,58,0.20)';
+    ctx.beginPath(); ctx.moveTo(s[0].x,s[0].y); ctx.lineTo(s[1].x,s[1].y); ctx.stroke();
+  }
+  for (let gz=2; gz<=42; gz+=3) {
+    const s = clipSeg([-24,0,gz],[24,0,gz]); if (!s) continue;
+    ctx.strokeStyle = 'rgba(95,82,58,0.14)';
+    ctx.beginPath(); ctx.moveTo(s[0].x,s[0].y); ctx.lineTo(s[1].x,s[1].y); ctx.stroke();
+  }
+  // angka jarak di lantai
+  ctx.textAlign = 'center';
+  for (const dm of [10,15,20,25,30]) {
+    const p = projW(-3.6, 0.02, dm); if (!p) continue;
+    const sz = clamp(F*0.55/view(-3.6,0.02,dm).z, 9, 42);
+    ctx.font = `800 ${sz}px system-ui`;
+    ctx.fillStyle = 'rgba(110,82,55,0.5)';
+    ctx.fillText(String(dm), p.x, p.y);
+  }
+  drawWall();
+  const ents = [];
+  for (const c of CRATES) ents.push({ d: Math.hypot(c.x,c.z), draw:()=>drawBox(c.x,c.z,c.w,c.d,c.h,false) });
+  if (T.block && T.block.key==='peek') for (const c of PEEK_COVERS)
+    ents.push({ d: Math.hypot(c.x,c.z), draw:()=>drawBox(c.x,c.z,c.w,c.dd,c.h,true) });
+  if (bot) { const p = botPos(bot); ents.push({ d: Math.hypot(p.x,p.z), draw:()=>drawBot(bot,now) }); }
+  ents.sort((a,b)=>b.d-a.d);
+  for (const e of ents) e.draw();
+  drawFX(now);
+  drawCrosshair(now);
+}
+function drawWall() {
+  const c = [ projW(-26,0,42), projW(26,0,42), projW(26,6,42), projW(-26,6,42) ];
+  if (c.some(p=>!p)) return;
+  ctx.fillStyle = '#bdb191';
+  ctx.beginPath(); ctx.moveTo(c[0].x,c[0].y);
+  for (let i=1;i<4;i++) ctx.lineTo(c[i].x,c[i].y);
+  ctx.closePath(); ctx.fill();
+  const r1 = projW(-26,5.4,42), r2 = projW(26,5.4,42), r3 = projW(26,6,42), r4 = projW(-26,6,42);
+  if (r1&&r2&&r3&&r4) {
+    ctx.fillStyle = 'rgba(199,58,71,.55)';
+    ctx.beginPath(); ctx.moveTo(r1.x,r1.y); ctx.lineTo(r2.x,r2.y); ctx.lineTo(r3.x,r3.y); ctx.lineTo(r4.x,r4.y);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.strokeStyle = 'rgba(80,68,48,.35)'; ctx.stroke();
+}
+function drawBox(cx, cz, w, d, h, isCover) {
+  const x0=cx-w/2, x1=cx+w/2, z0=cz-d/2, z1=cz+d/2;
+  const P8 = {};
+  const pts = { a:[x0,0,z0], b:[x1,0,z0], c:[x1,0,z1], d:[x0,0,z1],
+                A:[x0,h,z0], B:[x1,h,z0], C:[x1,h,z1], D:[x0,h,z1] };
+  for (const k in pts) { P8[k] = projW(...pts[k]); if (!P8[k]) return; }
+  const base = isCover ? [206,196,172] : [196,186,158];
+  const shade = (m) => `rgb(${Math.round(base[0]*m)},${Math.round(base[1]*m)},${Math.round(base[2]*m)})`;
+  const faces = [
+    { q:['d','c','C','D'], m:0.72 }, { q:['a','d','D','A'], m:0.82 }, { q:['b','c','C','B'], m:0.82 },
+    { q:['a','b','B','A'], m:1.0 }, { q:['A','B','C','D'], m:1.14, top:true },
+  ];
+  for (const f of faces) {
+    ctx.fillStyle = shade(f.m);
+    ctx.beginPath(); ctx.moveTo(P8[f.q[0]].x, P8[f.q[0]].y);
+    for (let i=1;i<4;i++) ctx.lineTo(P8[f.q[i]].x, P8[f.q[i]].y);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(80,68,48,.3)'; ctx.lineWidth = 1; ctx.stroke();
+  }
+  // strip merah di bibir atas muka depan
+  ctx.strokeStyle = isCover ? 'rgba(199,58,71,.8)' : 'rgba(199,58,71,.45)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(P8.A.x,P8.A.y); ctx.lineTo(P8.B.x,P8.B.y); ctx.stroke();
+}
+function drawBot(b, now) {
+  const p = botPos(b);
+  const vHead = view(p.x, BOT.headY, p.z);
+  if (vHead.z < 0.2) { drawOffscreenArrow(p); return; }
+  const dead = !b.alive ? clamp((now-b.deadT)/220, 0, 1) : 0;
+  if (dead >= 1) return;
+  const flash = b.flashT && now-b.flashT < 90;
+  const rBody = F*BOT.bodyR/vHead.z;
+  const rHead = F*BOT.headR/vHead.z;
+  const pHead = proj(vHead);
+  const pFeet = projW(p.x, 0.02, p.z);
+  const pSh   = projW(p.x, BOT.shoulderY, p.z);
+  if (!pFeet || !pSh) return;
+  const alpha = 1-dead, squash = 1-dead*0.6;
+  ctx.save(); ctx.globalAlpha = alpha;
+  ctx.fillStyle = 'rgba(60,50,35,.30)';
+  ctx.beginPath(); ctx.ellipse(pFeet.x, pFeet.y, rBody*1.25, rBody*0.32, 0, 0, 7); ctx.fill();
+  const topY = pFeet.y - (pFeet.y - pSh.y)*squash;
+  const bw = rBody*2;
+  ctx.fillStyle = flash ? '#e9968b' : '#8e3a3a';
+  ctx.strokeStyle = '#511d1c'; ctx.lineWidth = Math.max(1, rBody*0.12);
+  roundRectPath(pSh.x-bw/2, topY, bw, Math.max(2, pFeet.y-topY), rBody*0.7);
+  ctx.fill(); ctx.stroke();
+  // pelat dada
+  const chestY = topY + (pFeet.y-topY)*0.16, chestH = (pFeet.y-topY)*0.3;
+  ctx.fillStyle = flash ? '#f2b3a6' : '#a5493f';
+  roundRectPath(pSh.x-bw*0.38, chestY, bw*0.76, chestH, rBody*0.3);
+  ctx.fill();
+  // kepala — weak point glow
+  const hy = pHead.y + (pFeet.y-pHead.y)*dead*0.5;
+  ctx.shadowColor = 'rgba(255,150,110,0.9)'; ctx.shadowBlur = Math.max(5, rHead*1.1);
+  ctx.fillStyle = flash ? '#ffd9c9' : '#f2836f';
+  ctx.beginPath(); ctx.arc(pHead.x, hy, Math.max(1.6, rHead*squash), 0, 7); ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = Math.max(1, rHead*0.16);
+  ctx.beginPath(); ctx.arc(pHead.x, hy, Math.max(1.6, rHead*squash), 0, 7); ctx.stroke();
+  ctx.restore();
+}
+function drawOffscreenArrow(p) {
+  const dyaw = norm180(yawOf(p.x,p.z) - cam.yaw);
+  const x = dyaw > 0 ? W-26 : 26;
+  ctx.fillStyle = '#c73a47';
+  ctx.beginPath();
+  ctx.moveTo(x + (dyaw>0?9:-9), H/2);
+  ctx.lineTo(x - (dyaw>0?6:-6), H/2-10); ctx.lineTo(x - (dyaw>0?6:-6), H/2+10);
+  ctx.closePath(); ctx.fill();
+}
+function roundRectPath(x,y,w,h,r) {
+  r = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+function drawFX(now) {
+  if (FX.trace && now-FX.trace < 70) {
+    const k = 1-(now-FX.trace)/70;
+    ctx.strokeStyle = `rgba(255,240,210,${0.5*k})`; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(W*0.72, H*1.02); ctx.lineTo(W/2, H/2); ctx.stroke();
+  }
+  FX.rings = FX.rings.filter(r => now-r.t < 240);
+  for (const r of FX.rings) {
+    const p = projW(r.x, r.y, r.z); if (!p) continue;
+    const k = (now-r.t)/240;
+    ctx.strokeStyle = r.head ? `rgba(141,240,221,${0.9*(1-k)})` : `rgba(255,225,190,${0.7*(1-k)})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 4+k*24, 0, 7); ctx.stroke();
+  }
+  FX.dmg = FX.dmg.filter(d0 => now-d0.t < 560);
+  ctx.textAlign = 'center';
+  for (const d0 of FX.dmg) {
+    const k = (now-d0.t)/560;
+    const p = projW(d0.x, d0.y + k*0.45, d0.z); if (!p) continue;
+    ctx.font = `800 ${Math.max(11, F*0.16/view(d0.x,d0.y,d0.z).z)}px system-ui`;
+    ctx.fillStyle = d0.col.replace(')',`,${1-k})`).replace('rgb','rgba');
+    if (!d0.col.startsWith('rgb')) { ctx.globalAlpha = 1-k; ctx.fillStyle = d0.col; }
+    ctx.fillText(d0.txt, p.x, p.y);
+    ctx.globalAlpha = 1;
+  }
+  FX.decals = FX.decals.filter(d0 => now-d0.t < 2600);
+  for (const d0 of FX.decals) {
+    const p = projW(d0.x, d0.y, d0.z); if (!p) continue;
+    ctx.fillStyle = `rgba(60,50,40,${0.5*(1-(now-d0.t)/2600)})`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 2.4, 0, 7); ctx.fill();
+  }
+}
+function drawCrosshair(now) {
+  const cx = W/2, cy2 = H/2;
+  if (FX.hm && now-FX.hm < 130) {
+    const k = 1-(now-FX.hm)/130;
+    ctx.strokeStyle = FX.hmHead ? `rgba(255,255,255,${k})` : `rgba(255,225,190,${k})`;
+    ctx.lineWidth = 2;
+    const o = 7+(1-k)*3, l = 5;
+    ctx.beginPath();
+    for (const [sx,sy] of [[-1,-1],[1,-1],[-1,1],[1,1]]) {
+      ctx.moveTo(cx+sx*o, cy2+sy*o); ctx.lineTo(cx+sx*(o+l), cy2+sy*(o+l));
+    }
+    ctx.stroke();
+  }
+  ctx.strokeStyle = '#3be0c8'; ctx.lineWidth = 2; ctx.lineCap = 'butt';
+  const gp = 4, l = 7;
+  ctx.beginPath();
+  ctx.moveTo(cx-gp-l,cy2); ctx.lineTo(cx-gp,cy2); ctx.moveTo(cx+gp,cy2); ctx.lineTo(cx+gp+l,cy2);
+  ctx.moveTo(cx,cy2-gp-l); ctx.lineTo(cx,cy2-gp); ctx.moveTo(cx,cy2+gp); ctx.lineTo(cx,cy2+gp+l);
+  ctx.stroke();
+  ctx.fillStyle = '#fff'; ctx.fillRect(cx-1,cy2-1,2,2);
+}
+
+/* ---------- tombol menu ---------- */
+document.querySelectorAll('.modecard').forEach(mc => {
+  mc.addEventListener('click', () => {
+    const m = mc.dataset.m;
+    if (m === 'test') startTest();
+    else if (m === 'psa') startPSA();
+    else if (m === 'practice') $('#drillbar').classList.toggle('open');
+  });
+});
+document.querySelectorAll('#drillbar .chip').forEach(ch => {
+  ch.addEventListener('click', () => {
+    document.querySelectorAll('#drillbar .chip').forEach(c => c.classList.remove('on'));
+    ch.classList.add('on'); S.drill = ch.dataset.d;
+    $('#drill-desc').textContent = DRILL_DESC[S.drill];
+  });
+});
+$('#drill-desc').textContent = DRILL_DESC.flick;
+$('#btn-practice').addEventListener('click', () => startPractice(S.drill));
+/* ================= analisis & skor ================= */
+function analyzeSession() {
+  const gAll = R3.flick.map(f=>f.a?.gain).filter(g=>g!=null);
+  const gL = R3.flick.filter(f=>f.dir<0).map(f=>f.a?.gain).filter(g=>g!=null);
+  const gR = R3.flick.filter(f=>f.dir>0).map(f=>f.a?.gain).filter(g=>g!=null);
+  const mGains = R3.micro.map(f=>f.a?.gain).filter(g=>g!=null);
+  const reacts = R3.flick.map(f=>f.a?.reactMs).filter(x=>x!=null && x>40 && x<1200);
+  const corrs = [...R3.flick, ...R3.micro].map(f=>f.a?.corrMs).filter(x=>x!=null);
+  const revs = R3.flick.map(f=>f.a?.reversals).filter(x=>x!=null);
+  const microTtks = R3.micro.map(f=>f.ttk).filter(x=>x!=null);
+  const rec = recommend({ flickGains:gAll, microGains:mGains, sens:S.sens });
+  const aimed = LOG.shots.filter(s => s.tid!=null && s.offYaw!=null && s.phase!=='track' && s.phase!=='psa' && s.res!=='blocked');
+  const near = aimed.filter(s => Math.hypot(s.offYaw,s.offPitch) <= s.headAng*3.5);
+  const biasV = median(near.map(s=>s.offPitch));
+  const biasH = median(near.map(s=>s.offYaw));
+  const missShots = aimed.filter(s => s.res==='miss' && Math.hypot(s.offYaw,s.offPitch) <= s.headAng*4.5);
+  const sect = { atas:0, bawah:0, kiri:0, kanan:0 };
+  for (const s0 of missShots) {
+    const nx = s0.offYaw/s0.headAng, ny = s0.offPitch/s0.headAng;
+    if (Math.abs(ny) >= Math.abs(nx)) sect[ny>0?'atas':'bawah']++; else sect[nx>0?'kanan':'kiri']++;
+  }
+  const heads = aimed.filter(s=>s.res==='head').length;
+  const bodies = aimed.filter(s=>s.res==='body').length;
+  const missN = aimed.length - heads - bodies;
+  const headRate = aimed.length ? heads/aimed.length : NaN;
+  const pk = LOG.peeks;
+  const pkKilled = pk.filter(p=>p.killed);
+  const pkReact = pk.map(p=>p.reactMs).filter(x=>x!=null && x<1500);
+  const pkTtk = pkKilled.map(p=>p.ttkMs).filter(x=>x!=null);
+  const pkWinEnd = pk.length ? pk[pk.length-1].window : null;
+  const ts = LOG.track.samples;
+  const flips = LOG.track.flips;
+  const afterFlip = t => flips.some(f => t >= f.t && t < f.t+280);
+  const steady = ts.filter(s0=>!afterFlip(s0.t));
+  const steadyErr = median(steady.map(s0=>s0.err));
+  const onHead = ts.length ? ts.filter(s0=>s0.err<=s0.hA*1.6).length/ts.length : NaN;
+  const lag = median(steady.map(s0 => s0.off * s0.vs));
+  const recovs = flips.map(f=>f.recovMs).filter(x=>x!=null);
+  const recovMed = median(recovs);
+  const half = Math.floor(gAll.length/2);
+  const fat = { g1: median(gAll.slice(0,half)), g2: median(gAll.slice(half)),
+    r1: median(reacts.slice(0,Math.floor(reacts.length/2))), r2: median(reacts.slice(Math.floor(reacts.length/2))) };
+  const ttks = R3.flick.map(f=>f.ttk).filter(x=>x!=null);
+  return { rec, gAll, gL, gR, mGains, medL:median(gL), medR:median(gR), medM:median(mGains),
+    reactMed:median(reacts), corrAll:median(corrs), revAvg: revs.length? revs.reduce((a,b)=>a+b,0)/revs.length : NaN,
+    microTtkMed: median(microTtks), ttkMed: median(ttks),
+    near, aimedAll:aimed, biasV, biasH, sect, heads, bodies, missN, headRate,
+    pkN:pk.length, pkKillN:pkKilled.length, pkReactMed:median(pkReact), pkTtkMed:median(pkTtk), pkWinEnd,
+    steadyErr, onHead, lag, recovMed, flipsN:flips.length, fat };
+}
+function computeScore(A) {
+  const sub = {};
+  sub.kalibrasi = A.rec.ok ? Math.round(clamp(100 - Math.abs(A.rec.gain-1)*400, 0, 100)) : null;
+  const corrScore = isFinite(A.corrAll) ? clamp(100 - (A.corrAll-150)*(90/650), 0, 100) : null;
+  const hrScore = isFinite(A.headRate) ? clamp(A.headRate*140, 0, 100) : null;
+  sub.presisi = (corrScore!=null || hrScore!=null)
+    ? Math.round(0.55*(corrScore ?? hrScore) + 0.45*(hrScore ?? corrScore)) : null;
+  const kr = A.pkN ? A.pkKillN/A.pkN : NaN;
+  const reactScore = isFinite(A.pkReactMed) ? clamp(100-(A.pkReactMed-180)*(80/220),0,100) : null;
+  sub.duel = isFinite(kr) ? Math.round(0.7*clamp(kr*125,0,100) + 0.3*(reactScore ?? 50)) : null;
+  sub.tracking = isFinite(A.onHead)
+    ? Math.round(clamp(A.onHead*166,0,100)*0.75 + (isFinite(A.recovMed)?clamp(100-(A.recovMed-120)*(80/380),0,100):50)*0.25) : null;
+  sub.konsistensi = A.rec.ok ? Math.round(clamp(100 - (A.rec.iqr-0.05)*(90/0.35), 0, 100)) : null;
+  const Wt = { kalibrasi:.2, presisi:.25, duel:.2, tracking:.2, konsistensi:.15 };
+  let sum = 0, wsum = 0;
+  for (const k in Wt) if (sub[k] != null) { sum += sub[k]*Wt[k]; wsum += Wt[k]; }
+  const total = wsum ? Math.round(sum/wsum) : null;
+  const grade = total==null ? '—' : total>=90?'S':total>=80?'A':total>=65?'B':total>=50?'C':'D';
+  return { sub, total, grade };
+}
+
+const SEVC = { critical:'var(--critical)', warn:'var(--warn)', good:'var(--good)' };
+function buildVerdicts(A) {
+  const V = [];
+  const add = (sev, html) => V.push({ sev, html });
+  const { rec } = A;
+  if (rec.ok) {
+    const gp = Math.abs(rec.gain-1)*100;
+    if (rec.type === 'overshoot')
+      add(gp>12?'critical':'warn', `<b>Overshoot ${fmt(gp,0)}%.</b> Flick pertamamu kelewatan (${fmt(rec.overRate*100,0)}% flick lewat target). Sens ketinggian buat motorikmu → coba <b>${fmtS(rec.rec)}</b>.`);
+    else if (rec.type === 'undershoot')
+      add(gp>12?'critical':'warn', `<b>Undershoot ${fmt(gp,0)}%.</b> Flick-mu rata-rata cuma nyampe ${fmt(rec.gain*100,0)}% jarak — tangan kerja kelewat berat. Coba naik ke <b>${fmtS(rec.rec)}</b>.`);
+    else
+      add('good', `<b>Kalibrasi flick pas</b> — ${fmt(rec.gain*100,0)}% dari jarak target. Sens kamu udah jodoh; jangan diganti-ganti.`);
+  }
+  if (isFinite(A.medL) && isFinite(A.medR) && A.gL.length>=4 && A.gR.length>=4) {
+    const diff = (A.medL-A.medR)*100;
+    if (Math.abs(diff) >= 8)
+      add(Math.abs(diff)>=14?'critical':'warn', `<b>Asimetri arah ${fmt(Math.abs(diff),0)}%.</b> Kiri ${fmt(A.medL*100,0)}% vs kanan ${fmt(A.medR*100,0)}% — ini mekanik pergelangan, bukan sens. Drill: Latihan Flick, fokus arah lemah, 5 menit.`);
+    else
+      add('good', `<b>Kiri–kanan seimbang</b> (${fmt(A.medL*100,0)}% vs ${fmt(A.medR*100,0)}%).`);
+  }
+  if (isFinite(A.biasV) && A.near.length >= 10) {
+    const pctBelow = Math.round(A.near.filter(s=>s.offPitch<0).length/A.near.length*100);
+    if (Math.abs(A.biasV) >= 0.12)
+      add('warn', `<b>Bias vertikal ${fmt(Math.abs(A.biasV),2)}°</b> ke ${A.biasV<0?'BAWAH kepala (underaim klasik)':'ATAS kepala'} — ${pctBelow}% peluru deket kepala ada di bawah garis. Drill: jaga crosshair selalu di garis kepala pas jalan.`);
+    else
+      add('good', `<b>Level vertikal bersih</b> — bias ${fmt(Math.abs(A.biasV),2)}°.`);
+  }
+  if (isFinite(A.corrAll)) {
+    if (A.corrAll > 300)
+      add(A.corrAll>550?'critical':'warn', `<b>Koreksi lambat: ${Math.round(A.corrAll)} ms</b> dari flick berhenti sampai kill (sehat: ≤250). Ini pajak terbesar TTK-mu. Drill: Latihan Micro tiap hari 5 menit — pelan, satu tap satu kepala.`);
+    else
+      add('good', `<b>Micro-correction gesit</b> — ${Math.round(A.corrAll)} ms.`);
+  }
+  if (isFinite(A.reactMed)) {
+    if (A.reactMed > 270) add('warn', `<b>Reaksi ${Math.round(A.reactMed)} ms</b> (rata-rata orang 180–250). Fokusin mata di tengah layar, jangan nyari-nyari.`);
+    else add('good', `<b>Reaksi ${Math.round(A.reactMed)} ms</b> — cepat.`);
+  }
+  if (A.pkN >= 8) {
+    const rate = A.pkKillN/A.pkN;
+    if (rate < 0.6)
+      add(rate<0.4?'critical':'warn', `<b>Drop di bawah tekanan:</b> peek cuma ${A.pkKillN}/${A.pkN} (jendela akhir ${A.pkWinEnd} ms). Pipeline kill-mu lebih lambat dari durasi orang ngintip. Drill: Latihan Peek + deathmatch, SATU tap terarah per peek.`);
+    else
+      add('good', `<b>Tahan tekanan:</b> ${A.pkKillN}/${A.pkN} peek, jendela sampai ${A.pkWinEnd} ms.`);
+  }
+  if (isFinite(A.recovMed) && A.flipsN >= 8) {
+    if (A.recovMed > 300)
+      add('warn', `<b>Telat ngikutin ganti arah:</b> ${Math.round(A.recovMed)} ms tiap bot flip (${A.flipsN} flip). Lawan yang jago ADAD menang duel spray lawan kamu. Drill: Latihan Tracking.`);
+    else
+      add('good', `<b>Recovery ganti arah oke</b> — ${Math.round(A.recovMed)} ms.`);
+  }
+  if (isFinite(A.lag) && Math.abs(A.lag) >= 0.15)
+    add('warn', `<b>Tracking ${A.lag<0?'ketinggalan':'kebablasan'}</b> rata-rata ${fmt(Math.abs(A.lag),2)}° — ${A.lag<0?'berani dikit dahului arah gerak bot':'tahan, jangan mendahului kejauhan'}.`);
+  if (rec.ok && rec.iqr > 0.32)
+    add('warn', `<b>Konsistensi lebar (IQR ${fmt(rec.iqr,2)}):</b> kadang 90% kadang 140% — sumber "kadang jago kadang ampas". Kunci SATU sens 2 minggu + warm-up sama tiap hari.`);
+  if (isFinite(A.fat.g1) && isFinite(A.fat.g2) && Math.abs(A.fat.g2-A.fat.g1) >= 0.08)
+    add('warn', `<b>Drift dalam sesi:</b> gain ${fmt(A.fat.g1*100,0)}% → ${fmt(A.fat.g2*100,0)}%${A.fat.g2>A.fat.g1?' (makin liar — grip mulai tegang)':' (makin pendek — capek)'}. Istirahat tiap 30–40 menit.`);
+  const order = { critical:0, warn:1, good:2 };
+  V.sort((a,b)=>order[a.sev]-order[b.sev]);
+  return V;
+}
+
+/* ================= render hasil tes ================= */
+const GRADE_COL = { S:'var(--teal)', A:'var(--good)', B:'var(--s1)', C:'var(--warn)', D:'var(--critical)', '—':'var(--muted)' };
+function edpiRowHtml(recSens, curSens) {
+  const inp = `<input type="number" class="dpi-mini" value="${S.dpi ?? ''}" placeholder="DPI" min="100" max="26000" step="50"
+    style="width:92px;padding:5px 8px;font:600 13px var(--font);background:var(--panel2);border:1px solid var(--line);color:var(--ink)">`;
+  if (!S.dpi) return `<span style="color:var(--muted)">Penasaran eDPI & cm/360? Isi DPI mouse-mu (opsional):</span> ${inp}`;
+  const e = Math.round(recSens*S.dpi), cm = M.cm360(S.dpi, recSens);
+  const e2 = Math.round(curSens*S.dpi), cm2 = M.cm360(S.dpi, curSens);
+  return `${inp} → rekomendasi: eDPI <b>${e}</b> · <b>${fmt(cm)} cm</b>/360 &nbsp;·&nbsp; sens kamu: eDPI ${e2} · ${fmt(cm2)} cm/360 <span style="color:var(--muted)">(median pro 240 · mayoritas 150–450)</span>`;
+}
+function refreshEdpiRows() {
+  const wire = (el, recSens) => {
+    if (!el) return;
+    el.innerHTML = edpiRowHtml(recSens, S.sens);
+    el.querySelectorAll('.dpi-mini').forEach(inp => inp.addEventListener('change', () => {
+      const v = parseFloat(inp.value);
+      S.dpi = (v>=100 && v<=26000) ? Math.round(v) : null;
+      refreshEdpiRows();
+    }));
+  };
+  if (S.results?.rec?.ok) wire($('#res-edpirow'), S.results.rec.rec);
+  else $('#res-edpirow').innerHTML = '';
+  if (S.psa?.done) wire($('#psa-edpirow'), S.psa.final);
+  else $('#psa-edpirow').innerHTML = '';
+}
+function computeAndShowResults() {
+  const A = analyzeSession();
+  A.score = computeScore(A);
+  S.results = A;
+  const { rec } = A;
+  $('#res-score').textContent = A.score.total ?? '—';
+  $('#res-grade').textContent = A.score.grade;
+  $('#res-grade').style.background = GRADE_COL[A.score.grade];
+  $('#res-heroLabel').textContent = `Rekomendasi sens (di ${S.dpi} DPI)`;
+  if (rec.ok) {
+    const changePct = (rec.rec - S.sens)/S.sens*100;
+    $('#res-sens').innerHTML = `${fmtS(rec.rec)}` +
+      (Math.abs(changePct)>=1 ? `<span class="delta">${changePct>0?'+':'−'}${fmt(Math.abs(changePct),0)}% dari ${fmtS(S.sens)}</span>` : '');
+    $('#res-under').innerHTML =
+      `langsung bisa dipasang di Valorant` +
+      (S.lockMode!=='raw' ? ` · <span style="color:var(--warn)">tanpa raw input — perkiraan</span>` : '') +
+      (Math.abs(changePct) > 5 ? `<br><span style="color:var(--muted)">Saran dari data, bukan harga mati — validasi lewat sesi pembanding, adu angkanya.</span>` : '');
+  } else {
+    $('#res-sens').textContent = '—';
+    $('#res-under').innerHTML = `<span style="color:var(--warn)">${rec.reason}</span>`;
+  }
+  refreshEdpiRows();
+  $('#res-verdicts').innerHTML = buildVerdicts(A).map(v =>
+    `<div class="vitem"><div class="sev" style="background:${SEVC[v.sev]}"></div><div>${v.html}</div></div>`).join('');
+  const sub = A.score.sub;
+  const tiles = [
+    ['Kalibrasi', sub.kalibrasi ?? '—', rec.ok?`gain ${fmt(rec.gain*100,0)}%`:''],
+    ['Presisi', sub.presisi ?? '—', isFinite(A.corrAll)?`koreksi ${Math.round(A.corrAll)} ms · head ${fmt(A.headRate*100,0)}%`:''],
+    ['Duel', sub.duel ?? '—', A.pkN?`peek ${A.pkKillN}/${A.pkN} · react ${Math.round(A.pkReactMed)||'—'} ms`:''],
+    ['Tracking', sub.tracking ?? '—', isFinite(A.onHead)?`nempel ${fmt(A.onHead*100,0)}% · recov ${Math.round(A.recovMed)||'—'} ms`:''],
+    ['Konsistensi', sub.konsistensi ?? '—', rec.ok?`IQR ${fmt(rec.iqr,2)}`:''],
+    ['TTK flick', isFinite(A.ttkMed)?`${Math.round(A.ttkMed)}`:'—', 'ms · median spawn→mati'],
+  ];
+  $('#res-tiles').innerHTML = tiles.map(t =>
+    `<div class="tile"><div class="l">${t[0]}</div><div class="v">${t[1]}</div><div class="d">${t[2]}</div></div>`).join('');
+  renderPlacement(A);
+  renderDirBars(A);
+  renderTable3();
+  show('results');
+}
+function renderPlacement(A) {
+  const el = $('#chart-place');
+  const Wc = el.clientWidth || 470, Hc = 300;
+  const cx = Wc/2, cy = Hc*0.40;
+  const U = Math.min(Wc,Hc)/11;
+  const px = n => cx + n*U, py = n => cy - n*U;
+  let s = '';
+  for (let u=-4; u<=4; u+=2) { if (u===0) continue;
+    s += `<line x1="${px(u)}" y1="${py(4)}" x2="${px(u)}" y2="${py(-6)}" stroke="#243441" stroke-width="1"/>`; }
+  for (let u=-6; u<=4; u+=2) { if (u===0) continue;
+    s += `<line x1="${px(-5)}" y1="${py(u)}" x2="${px(5)}" y2="${py(u)}" stroke="#243441" stroke-width="1"/>`; }
+  s += `<line x1="${px(0)}" y1="${py(4)}" x2="${px(0)}" y2="${py(-6)}" stroke="#2e4050" stroke-width="1"/>`;
+  s += `<line x1="${px(-5)}" y1="${py(0)}" x2="${px(5)}" y2="${py(0)}" stroke="#2e4050" stroke-width="1"/>`;
+  const bw = 2.45;
+  s += `<rect x="${px(-bw)}" y="${py(-1.8)}" width="${(2*bw)*U}" height="${(6-1.8)*U}" rx="${0.9*U}" fill="#1e2c39" stroke="#2e4050" stroke-width="1.5"/>`;
+  s += `<circle cx="${px(0)}" cy="${py(0)}" r="${U}" fill="#1e2c39" stroke="#7a8894" stroke-width="1.5"/>`;
+  const COL = { head:'#199e70', body:'#3987e5', miss:'#d95926' };
+  const shots = A.aimedAll.filter(sh => Math.abs(sh.offYaw/sh.headAng)<=5 && sh.offPitch/sh.headAng<=4 && sh.offPitch/sh.headAng>=-6).slice(0,90);
+  shots.forEach((sh,i) => {
+    const nx = sh.offYaw/sh.headAng, ny = sh.offPitch/sh.headAng;
+    s += `<circle class="pd" data-i="${i}" cx="${px(nx)}" cy="${py(ny)}" r="4.5" fill="${COL[sh.res]}" stroke="#16222d" stroke-width="2"/>`;
+  });
+  s += `<text x="${px(0)+4}" y="${py(4)+12}" fill="#7a8894" font-size="10.5">atas</text>`;
+  s += `<text x="${px(0)+4}" y="${py(-6)-5}" fill="#7a8894" font-size="10.5">bawah</text>`;
+  s += `<text x="${px(-5)+2}" y="${py(0)-6}" fill="#7a8894" font-size="10.5">kiri</text>`;
+  s += `<text x="${px(5)-32}" y="${py(0)-6}" fill="#7a8894" font-size="10.5">kanan</text>`;
+  el.innerHTML = `<svg viewBox="0 0 ${Wc} ${Hc}" width="100%" height="${Hc}" role="img" aria-label="Peta penempatan tembakan">${s}</svg>`;
+  $('#legend-place').innerHTML =
+    `<span class="it"><span class="dot" style="background:${COL.head}"></span>headshot</span>
+     <span class="it"><span class="dot" style="background:${COL.body}"></span>kena badan</span>
+     <span class="it"><span class="dot" style="background:${COL.miss}"></span>miss</span>`;
+  const tip = $('#tooltip');
+  el.querySelectorAll('.pd').forEach(d => {
+    const i = +d.dataset.i, sh = shots[i];
+    d.addEventListener('mousemove', ev => {
+      tip.style.display='block';
+      tip.innerHTML = `<b>${sh.res}</b> · ${sh.offYaw>0?'+':''}${fmt(sh.offYaw,2)}° horz, ${sh.offPitch>0?'+':''}${fmt(sh.offPitch,2)}° vert · ${fmt(sh.dist,0)} m · ${sh.phase}`;
+      tip.style.left = (ev.clientX+14)+'px'; tip.style.top = (ev.clientY-10)+'px';
+    });
+    d.addEventListener('mouseleave', () => tip.style.display='none');
+  });
+}
+function renderDirBars(A) {
+  const el = $('#chart-dir');
+  const Wc = el.clientWidth || 470, Hc = 300, padB = 30, padT = 24;
+  const ih = Hc-padT-padB;
+  const vals = [ {k:'Kiri', v:A.medL, n:A.gL.length}, {k:'Kanan', v:A.medR, n:A.gR.length} ];
+  const maxV = Math.max(1.5, ...vals.map(v=>v.v||0));
+  const y = v => padT + ih - (v/maxV)*ih;
+  let s = '';
+  s += `<line x1="30" y1="${y(1)}" x2="${Wc-10}" y2="${y(1)}" stroke="#7a8894" stroke-width="1"/>`;
+  s += `<text x="${Wc-10}" y="${y(1)-5}" fill="#7a8894" font-size="10.5" text-anchor="end">pas (100%)</text>`;
+  const slot = (Wc-60)/2;
+  vals.forEach((v0,i) => {
+    const cxm = 40 + slot*i + slot/2;
+    if (v0.v==null || !isFinite(v0.v)) {
+      s += `<text x="${cxm}" y="${y(0.5)}" fill="#7a8894" font-size="11" text-anchor="middle">data kurang</text>`;
+    } else {
+      const bw2 = 24, x = cxm-bw2/2, yy = y(v0.v), rr = 4;
+      s += `<path d="M${x},${padT+ih} L${x},${yy+rr} Q${x},${yy} ${x+rr},${yy} L${x+bw2-rr},${yy} Q${x+bw2},${yy} ${x+bw2},${yy+rr} L${x+bw2},${padT+ih} Z" fill="#3987e5"/>`;
+      s += `<text x="${cxm}" y="${yy-7}" fill="#aab6bd" font-size="12" font-weight="600" text-anchor="middle">${fmt(v0.v*100,0)}%</text>`;
+    }
+    s += `<text x="${cxm}" y="${Hc-9}" fill="#7a8894" font-size="11" text-anchor="middle">${v0.k} · ${v0.n} flick</text>`;
+  });
+  s += `<line x1="30" y1="${padT+ih}" x2="${Wc-10}" y2="${padT+ih}" stroke="#2e4050" stroke-width="1"/>`;
+  el.innerHTML = `<svg viewBox="0 0 ${Wc} ${Hc}" width="100%" height="${Hc}" role="img" aria-label="Gain flick per arah">${s}</svg>`;
+}
+function renderTable3() {
+  const rows = [...R3.flick.map((f,i)=>({f,lbl:`Flick ${i+1}`})), ...R3.micro.map((f,i)=>({f,lbl:`Micro ${i+1}`}))].map(({f,lbl}) => {
+    const a = f.a || {};
+    return `<tr><td>${lbl} (${f.dir<0?'kiri':'kanan'})</td><td>${fmt(f.req,1)}°</td><td>${fmt(f.dist,0)} m</td>` +
+      `<td>${a.gain!=null?fmt(a.gain*100,0)+'%':'—'}</td>` +
+      `<td>${a.reactMs!=null?a.reactMs+' ms':'—'}</td>` +
+      `<td>${a.corrMs!=null?a.corrMs+' ms':'—'}</td>` +
+      `<td>${f.ttk!=null?f.ttk+' ms':'—'}</td>` +
+      `<td>${f.hit ? (f.hs?'headshot':'body ×'+f.shots) : 'lolos'}</td></tr>`;
+  }).join('');
+  $('#res-table').innerHTML =
+    `<tr><th>Target</th><th>Sudut</th><th>Jarak</th><th>Flick vs jarak</th><th>Reaksi</th><th>Koreksi</th><th>TTK</th><th>Hasil</th></tr>` + rows;
+}
+
+/* ================= hasil PSA ================= */
+function renderPSAResults() {
+  const Pp = S.psa; if (!Pp) return;
+  $('#psa-sens').textContent = fmtS(Pp.final);
+  const diff = (Pp.final - S.sens)/S.sens*100;
+  $('#psa-under').innerHTML =
+    `presisi konvergensi ±${Pp.band}%` +
+    `<br><span style="color:var(--muted)">${Math.abs(diff)<3 ? 'Hampir sama dengan sens kamu sekarang — kalibrasimu udah pas.' :
+      `${diff>0?'+':'−'}${fmt(Math.abs(diff),0)}% dari sens kamu sekarang (${fmtS(S.sens)}).`}</span>`;
+  refreshEdpiRows();
+  const el = $('#chart-psa');
+  const res = Pp.results;
+  const Wc = el.clientWidth || 900, Hc = 260, padL = 56, padR = 20, padT = 18, padB = 40;
+  const iw = Wc-padL-padR, ih = Hc-padT-padB;
+  const senses = res.map(r=>r.sens).concat([Pp.final]);
+  const lo = Math.min(...senses)*0.92, hi = Math.max(...senses)*1.08;
+  const X = i => padL + (res.length<2 ? iw/2 : i/(res.length-1)*iw);
+  const Y = v => padT + ih - (Math.log(v/lo)/Math.log(hi/lo))*ih;
+  let s = '';
+  [0,0.25,0.5,0.75,1].forEach(f => {
+    const v = lo*Math.pow(hi/lo,f);
+    s += `<line x1="${padL}" y1="${Y(v)}" x2="${Wc-padR}" y2="${Y(v)}" stroke="#243441" stroke-width="1"/>`;
+    s += `<text x="${padL-8}" y="${Y(v)+4}" fill="#7a8894" font-size="10.5" text-anchor="end">${fmtS(v)}</text>`;
+  });
+  s += `<line x1="${padL}" y1="${Y(Pp.final)}" x2="${Wc-padR}" y2="${Y(Pp.final)}" stroke="#3be0c8" stroke-width="1.5" opacity="0.6"/>`;
+  s += `<text x="${Wc-padR}" y="${Y(Pp.final)+18}" fill="#3be0c8" font-size="11" font-weight="700" text-anchor="end">hasil ${fmtS(Pp.final)}</text>`;
+  let path = '';
+  res.forEach((r,i) => { path += (i?'L':'M') + X(i) + ',' + Y(r.sens) + ' '; });
+  s += `<path d="${path}" fill="none" stroke="#3987e5" stroke-width="2" stroke-linejoin="round"/>`;
+  res.forEach((r,i) => {
+    s += `<circle cx="${X(i)}" cy="${Y(r.sens)}" r="6" fill="#3987e5" stroke="#16222d" stroke-width="2"/>`;
+    const gtxt = r.gain!=null ? Math.round(r.gain*100)+'%' : '—';
+    s += `<text x="${X(i)}" y="${Y(r.sens)-12}" fill="#aab6bd" font-size="11" font-weight="600" text-anchor="middle">${gtxt}</text>`;
+    s += `<text x="${X(i)}" y="${Hc-12}" fill="#7a8894" font-size="10.5" text-anchor="middle">R${r.round}</text>`;
+  });
+  el.innerHTML = `<svg viewBox="0 0 ${Wc} ${Hc}" width="100%" height="${Hc}" role="img" aria-label="Jalur konvergensi PSA">${s}</svg>`;
+}
+$('#psa-use').addEventListener('click', () => {
+  if (!S.psa) return;
+  $('#in-sens').value = S.psa.final; updatePreview();
+  $('#psa-use').textContent = 'Kepasang ✓';
+  setTimeout(()=>{ $('#psa-use').textContent = 'Pakai sens ini'; }, 1500);
+});
+$('#psa-test').addEventListener('click', () => {
+  if (S.psa) { $('#in-sens').value = S.psa.final; updatePreview(); }
+  startTest();
+});
+$('#psa-menu').addEventListener('click', () => show('menu'));
+
+/* ================= kartu skor PNG ================= */
+function drawShareCard() {
+  const A = S.results; if (!A) return null;
+  const c = document.createElement('canvas');
+  c.width = 1200; c.height = 675;
+  const x = c.getContext('2d');
+  x.fillStyle = '#0f1923'; x.fillRect(0,0,1200,675);
+  x.save();
+  x.globalAlpha = 0.05; x.strokeStyle = '#ece8e1'; x.lineWidth = 2;
+  for (let i=-20;i<40;i++){ x.beginPath(); x.moveTo(i*60,700); x.lineTo(i*60+300,-30); x.stroke(); }
+  x.restore();
+  x.fillStyle = '#ff4655'; x.fillRect(0,0,1200,6);
+  x.fillStyle = '#ece8e1'; x.font = '800 34px system-ui'; x.textAlign='left';
+  x.fillText('RANGE', 60, 78);
+  x.fillStyle = '#ff4655'; x.fillText('//', 189, 78);
+  x.fillStyle = '#ece8e1'; x.fillText('PROTOCOL', 226, 78);
+  x.font = '600 17px system-ui'; x.fillStyle = '#7a8894';
+  x.fillText('AIM BENCHMARK · VALORANT · ' + new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}), 60, 108);
+  x.fillStyle = '#ece8e1'; x.font = '800 210px system-ui';
+  x.fillText(String(A.score.total ?? '—'), 60, 350);
+  const gw = x.measureText(String(A.score.total ?? '—')).width;
+  const gcol = { S:'#3be0c8', A:'#0ca30c', B:'#3987e5', C:'#fab219', D:'#d03b3b' }[A.score.grade] || '#7a8894';
+  const gx = 60+gw+34, gy = 240;
+  x.fillStyle = gcol;
+  x.beginPath();
+  x.moveTo(gx+10,gy); x.lineTo(gx+118,gy); x.lineTo(gx+118,gy+100); x.lineTo(gx+108,gy+110); x.lineTo(gx,gy+110); x.lineTo(gx,gy+10);
+  x.closePath(); x.fill();
+  x.fillStyle = '#0f1923'; x.font = '800 74px system-ui'; x.textAlign='center';
+  x.fillText(A.score.grade, gx+59, gy+86);
+  x.textAlign='left';
+  x.font = '700 19px system-ui'; x.fillStyle = '#7a8894';
+  x.fillText('AIM SCORE', 64, 395);
+  const subs = [['KALIBRASI',A.score.sub.kalibrasi],['PRESISI',A.score.sub.presisi],['DUEL',A.score.sub.duel],
+                ['TRACKING',A.score.sub.tracking],['KONSISTENSI',A.score.sub.konsistensi]];
+  let sx = 60;
+  for (const [lbl,val] of subs) {
+    x.fillStyle = '#16222d'; x.fillRect(sx, 440, 200, 96);
+    x.fillStyle = '#ff4655'; x.fillRect(sx, 440, 26, 3);
+    x.fillStyle = '#7a8894'; x.font = '700 13px system-ui';
+    x.fillText(lbl, sx+16, 470);
+    x.fillStyle = '#ece8e1'; x.font = '800 40px system-ui';
+    x.fillText(String(val ?? '—'), sx+16, 516);
+    sx += 216;
+  }
+  x.fillStyle = '#aab6bd'; x.font = '600 19px system-ui';
+  const rec = A.rec;
+  x.fillText(`Sens: ${fmtS(S.sens)}` +
+    (S.dpi ? `  ·  ${S.dpi} DPI  ·  eDPI ${Math.round(S.dpi*S.sens)}  ·  ${fmt(M.cm360(S.dpi,S.sens))} cm/360` : '') +
+    (rec.ok ? `  ·  rekomendasi ${fmtS(rec.rec)}` : ''), 60, 590);
+  x.fillStyle = '#7a8894'; x.font = '600 15px system-ui';
+  x.fillText('Tes Serius: Flick 30 · Micro 20 · Peek 16 · Tracking 45 dtk — fan-made, bukan produk Riot', 60, 625);
+  return c;
+}
+$('#btn-card').addEventListener('click', () => {
+  const c = drawShareCard(); if (!c) return;
+  c.toBlob(b => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(b);
+    a.download = 'range-protocol-score.png';
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+  }, 'image/png');
+});
+
+/* ================= laporan & replay ================= */
+function buildDigest() {
+  const A = S.results || analyzeSession();
+  const m = LOG.meta;
+  const L = [];
+  L.push('=== RANGE//PROTOCOL — LAPORAN SESI (tempel ke chat Claude) ===');
+  L.push(`meta: ${new Date(m.ts||Date.now()).toISOString()} | mode ${m.mode||'?'} | sens ${m.sens}` +
+    (S.dpi ? ` | dpi ${S.dpi} | eDPI ${Math.round(S.dpi*m.sens)} | cm360 ${fmt(M.cm360(S.dpi,m.sens))}` : ' | dpi -') +
+    ` | input ${m.lockMode||'?'}`);
+  if (A.score && A.score.total!=null) L.push(`SCORE: ${A.score.total} (${A.score.grade}) | kalibrasi ${A.score.sub.kalibrasi} presisi ${A.score.sub.presisi} duel ${A.score.sub.duel} tracking ${A.score.sub.tracking} konsistensi ${A.score.sub.konsistensi}`);
+  if (A.gAll.length) L.push(`FLICK(n=${A.gAll.length}): medGain ${Math.round(median(A.gAll)*100)}% | L ${isFinite(A.medL)?Math.round(A.medL*100)+'%':'-'} (n${A.gL.length}) | R ${isFinite(A.medR)?Math.round(A.medR*100)+'%':'-'} (n${A.gR.length}) | IQR ${fmt(quantile(A.gAll,.75)-quantile(A.gAll,.25),2)} | react ${Math.round(A.reactMed)||'-'}ms | rev ${fmt(A.revAvg,1)}`);
+  if (A.mGains.length) L.push(`MICRO(n=${A.mGains.length}): medGain ${Math.round(A.medM*100)}% | ttk ${Math.round(A.microTtkMed)||'-'}ms`);
+  if (isFinite(A.corrAll)) L.push(`KOREKSI: ${Math.round(A.corrAll)}ms (gabungan flick+micro)`);
+  L.push(`SHOTS: head ${A.heads} | body ${A.bodies} | miss ${A.missN} | biasVert ${isFinite(A.biasV)?fmt(A.biasV,2):'-'}° | biasHorz ${isFinite(A.biasH)?fmt(A.biasH,2):'-'}° | sektorMiss atas ${A.sect.atas} bawah ${A.sect.bawah} kiri ${A.sect.kiri} kanan ${A.sect.kanan}`);
+  if (A.pkN) L.push(`PEEK(n=${A.pkN}): kill ${A.pkKillN} | react ${Math.round(A.pkReactMed)||'-'}ms | ttk ${Math.round(A.pkTtkMed)||'-'}ms | windowAkhir ${A.pkWinEnd}ms`);
+  if (LOG.track.samples.length) L.push(`TRACK: steady ${fmt(A.steadyErr,2)}° | onHead ${Math.round(A.onHead*100)}% | lag ${fmt(A.lag,2)}° | recovery ${Math.round(A.recovMed)||'-'}ms | flips ${A.flipsN}`);
+  if (isFinite(A.fat.g1)) L.push(`FATIGUE: gain ${Math.round(A.fat.g1*100)}%→${Math.round(A.fat.g2*100)}% | react ${Math.round(A.fat.r1)||'-'}→${Math.round(A.fat.r2)||'-'}ms`);
+  if (A.rec.ok) L.push(`REKOMENDASI: sens ${fmtS(A.rec.rec)}` +
+    (S.dpi ? ` (eDPI ${Math.round(A.rec.rec*S.dpi)}, ${fmt(M.cm360(S.dpi,A.rec.rec))} cm/360)` : '') + ` | tipe ${A.rec.type}`);
+  if (LOG.psa && LOG.psa.length) L.push(`PSA: ${LOG.psa.map(r=>`R${r.round} s${fmtS(r.sens)}→${r.gain!=null?Math.round(r.gain*100)+'%':'-'}`).join(' | ')}${S.psa?` | FINAL ${fmtS(S.psa.final)} ±${S.psa.band}%`:''}`);
+  L.push('flicks: blok,dir,deg,jarak_m,gain,reactMs,corrMs,rev,ttkMs,hasil');
+  for (const f of [...R3.flick, ...R3.micro]) {
+    const a = f.a||{};
+    L.push([f.blockKey||'flick', f.dir<0?'L':'R', fmt(f.req,1), fmt(f.dist,0), a.gain!=null?fmt(a.gain,3):'-',
+      a.reactMs??'-', a.corrMs??'-', a.reversals??'-', f.ttk??'-', f.hit?(f.hs?'HS':'body'):'lolos'].join(','));
+  }
+  L.push('=== END — drop replay lengkap ke Claude buat bedah per-milidetik ===');
+  return L.join('\n');
+}
+$('#btn-digest').addEventListener('click', async () => {
+  const txt = buildDigest();
+  try { await navigator.clipboard.writeText(txt); $('#btn-digest').textContent = 'Kesalin ✓'; }
+  catch(e) { window.prompt('Salin manual:', txt); }
+  setTimeout(()=>{ $('#btn-digest').textContent = 'Salin laporan'; }, 1600);
+});
+$('#btn-replay').addEventListener('click', () => {
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const name = `range-replay-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.json`;
+  const blob = new Blob([JSON.stringify({ ...LOG, digest: buildDigest() })], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+});
+$('#btn-setup').addEventListener('click', () => show('menu'));
+$('#btn-gopsa').addEventListener('click', () => startPSA());
+$('#btn-retest').addEventListener('click', () => {
+  if (S.results?.rec?.ok) { $('#in-sens').value = S.results.rec.rec; updatePreview(); }
+  startTest();
+});
+
+updatePreview();
+show('menu');
+
+/* ================= ekspos buat tes ================= */
+window.AIM = { M, recommend, analyzeFlick, median, quantile, norm180, view, projW, computeScore };
+window.__aimDebug = {
+  S, R3, LOG, T, cam, ENG, TEST_BLOCKS, PSA_CFG, PRACTICE_DRILLS,
+  getPSA(){ return PSA; },
+  targetInfo() {
+    if (!bot) return null;
+    const o = offsetsTo(bot);
+    return { ...o, kind: bot.kind, alive: bot.alive, peekState: peek ? peek.state : null,
+             count: T.count, block: T.block?.key, psa: !!T.block?.psa, mode: S.mode };
+  },
+  goto: show, buildDigest, startTest, startPSA, startPractice,
+  fillFake() {
+    readInputs(); logReset();
+    LOG.meta = { app:'range-protocol', v:3, mode:'test', ts:Date.now(), dpi:S.dpi, sens:S.sens, lockMode:'raw' };
+    S.lockMode = 'raw'; S.mode = 'test';
+    const fg = [[-1,1.24],[1,1.06],[-1,1.31],[1,1.09],[-1,1.19],[1,1.02],[-1,1.28],[1,1.12],[-1,1.22],[1,0.97],
+                [-1,1.35],[1,1.08],[-1,1.17],[1,1.11],[-1,1.26],[1,1.04],[-1,1.2],[1,1.1],[-1,1.15],[1,1.07],
+                [-1,1.29],[1,1.03],[-1,1.21],[1,1.13],[-1,1.18],[1,1.05],[-1,1.23]];
+    R3.flick = fg.map(([dir,g],i) => ({ req:9+(i*31)%28, dir, dist:11+(i*17)%18, blockKey:'flick',
+      a:{ gain:g, flickDeg:0, reactMs:210+(i%6)*14, corrMs:180+((i*41)%260), reversals:i%3 },
+      ttk: 540+(i*23)%420, shots:1+(i%7===3?1:0), hs:i%7!==3, hit:i%9!==4 }));
+    const mgd = [1.1,1.02,1.12,0.98,1.06,1.09,1.01,1.07,1.05,1.1,1.0,1.08,1.04,1.03,1.06,1.02,1.09,1.05];
+    R3.micro = mgd.map((g,i) => ({ req:2.5+(i*13)%4, dir:i%2?1:-1, dist:15+(i*7)%10, blockKey:'micro',
+      a:{ gain:g, flickDeg:0, reactMs:190+(i%5)*12, corrMs:150+((i*37)%180), reversals:i%2 },
+      ttk: 380+(i*19)%260, shots:1, hs:i%6!==2, hit:i%10!==7 }));
+    let t = 1000;
+    const mk = (res,oy,op,ha,ph) => { LOG.shots.push({t:t+=137, tid:1+(t%40), res, offYaw:oy, offPitch:op, headAng:ha, dist:14, phase:ph}); };
+    const HA = 0.42;
+    for (let i=0;i<26;i++) mk('head', Math.sin(i*2.7)*HA*0.55, Math.cos(i*1.9)*HA*0.5-0.06, HA, i%2?'flick':'micro');
+    for (let i=0;i<8;i++)  mk('body', Math.sin(i*1.3)*HA*1.6, -HA*(1.6+(i%4)*0.5), HA, 'flick');
+    for (let i=0;i<16;i++) { const below = i%3!==0;
+      mk('miss', Math.sin(i*3.1)*HA*(1.4+(i%3)), below ? -HA*(1.3+(i%4)*0.6) : HA*(1.2+(i%3)*0.5), HA, i%2?'flick':'peek'); }
+    for (let i=0;i<16;i++) LOG.peeks.push({ t:t+=900, tid:60+i, window:850-40*Math.min(i,6),
+      killed: i%3 !== 1, reactMs: 205+(i%5)*22, ttkMs: i%3!==1 ? 420+(i%4)*70 : null });
+    for (let i=0;i<30;i++) LOG.track.flips.push({ t: 90000+i*1400, recovMs: 230+(i%5)*60 });
+    for (let i=0;i<1300;i++) LOG.track.samples.push({ t:90000+i*34, err: Math.abs(Math.sin(i/9))*0.8+0.1,
+      off: Math.sin(i/7)*0.5-0.15, hA:0.39, vs: (Math.floor(i/25)%2)?1:-1 });
+    computeAndShowResults();
+  },
+  fillFakePSA() {
+    readInputs();
+    S.psa = { round:5, lo:0.34, hi:0.37, cur:0.355, done:true, final:0.355, band:4,
+      results:[ {round:1,sens:0.4,gain:1.14,n:7}, {round:2,sens:0.283,gain:0.84,n:7},
+                {round:3,sens:0.336,gain:0.95,n:7}, {round:4,sens:0.367,gain:1.05,n:7},
+                {round:5,sens:0.351,gain:1.0,n:7} ] };
+    renderPSAResults(); show('psa');
+  },
+};
+})();
+</script>
+</body>
+</html>
