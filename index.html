@@ -545,21 +545,56 @@ function noiseBuffer(){
 }
 function envG(t0, v, dur){ const g = ac().createGain();
   g.gain.setValueAtTime(v, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0+dur); return g; }
-function sfxShot() {           // crack senapan + thump badan senjata
+function sfxShot() {           // ala Vandal: crack tajam + body metalik + thump dada + tick mekanis
   if (!S.sound) return;
   try { const a = ac(), t = a.currentTime;
+    // crack — transien tajam, decay super cepat
     const n = a.createBufferSource(); n.buffer = noiseBuffer();
-    const hp = a.createBiquadFilter(); hp.type='highpass'; hp.frequency.value = 850;
-    const lp = a.createBiquadFilter(); lp.type='lowpass';
-    lp.frequency.setValueAtTime(7000, t); lp.frequency.exponentialRampToValueAtTime(1100, t+0.09);
-    const g = envG(t, 0.14, 0.1);
-    n.connect(hp); hp.connect(lp); lp.connect(g); g.connect(a.destination);
-    n.start(t); n.stop(t+0.12);
-    const o = a.createOscillator(); o.type='sine';
-    o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(52, t+0.1);
-    const g2 = envG(t, 0.16, 0.12);
-    o.connect(g2); g2.connect(a.destination); o.start(t); o.stop(t+0.14);
+    const hp = a.createBiquadFilter(); hp.type='highpass'; hp.frequency.value = 1400;
+    const g = envG(t, 0.22, 0.045);
+    n.connect(hp); hp.connect(g); g.connect(a.destination); n.start(t); n.stop(t+0.05);
+    // body — bandpass turun 3,1k→750 Hz, kesan "brrap" metalik
+    const n2 = a.createBufferSource(); n2.buffer = noiseBuffer();
+    const bp = a.createBiquadFilter(); bp.type='bandpass'; bp.Q.value = 1.2;
+    bp.frequency.setValueAtTime(3100, t); bp.frequency.exponentialRampToValueAtTime(750, t+0.11);
+    const g2 = envG(t, 0.17, 0.13);
+    n2.connect(bp); bp.connect(g2); g2.connect(a.destination); n2.start(t); n2.stop(t+0.14);
+    // thump — dada
+    const o = a.createOscillator(); o.type='triangle';
+    o.frequency.setValueAtTime(170, t); o.frequency.exponentialRampToValueAtTime(48, t+0.11);
+    const g3 = envG(t, 0.30, 0.13);
+    o.connect(g3); g3.connect(a.destination); o.start(t); o.stop(t+0.15);
+    // tick bolt — jeda dikit, ngasih irama full-auto khas Vandal
+    const o2 = a.createOscillator(); o2.type='square'; o2.frequency.value = 2400 + Math.random()*400;
+    const g4 = envG(t+0.028, 0.03, 0.025);
+    o2.connect(g4); g4.connect(a.destination); o2.start(t+0.028); o2.stop(t+0.06);
   } catch(e){}
+}
+function sfxAce() {            // stinger ACE — arpeggio saw ganda naik + sub hit di puncak
+  if (!S.sound) return;
+  try { const a = ac();
+    const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5];   // C5 E5 G5 C6 E6
+    notes.forEach((f,i) => {
+      const t = a.currentTime + 0.05 + i*0.09;
+      const last = i === notes.length-1;
+      [0, 7].forEach(det => {
+        const o = a.createOscillator(); o.type='sawtooth'; o.frequency.value = f*(1+det/1200);
+        const lp = a.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value = 3800;
+        const g = envG(t, 0.055, last ? 0.85 : 0.30);
+        o.connect(lp); lp.connect(g); g.connect(a.destination);
+        o.start(t); o.stop(t + (last ? 0.9 : 0.34));
+      });
+    });
+    const t2 = a.currentTime + 0.05 + (notes.length-1)*0.09;
+    const o3 = a.createOscillator(); o3.type='sine';
+    o3.frequency.setValueAtTime(196, t2); o3.frequency.exponentialRampToValueAtTime(65, t2+0.4);
+    const g5 = envG(t2, 0.22, 0.45);
+    o3.connect(g5); g5.connect(a.destination); o3.start(t2); o3.stop(t2+0.5);
+  } catch(e){}
+}
+function killFeedback(now) {
+  sfxKill(P.streak);
+  if (P.streak > 0 && P.streak % 5 === 0) { sfxAce(); FX.aceT = now; }
 }
 function sfxDink() {           // "dink" metalik headshot
   if (!S.sound) return;
@@ -691,7 +726,7 @@ const T = { running:false, paused:true, fallback:false, prevX:null, prevY:null,
             lockCooldownUntil:0, _pausedAt:0, blockIdx:-1, block:null, count:0, spawnAt:0 };
 const R3 = { flick:[], micro:[], peekKills:0, misses:0, clicksAll:0, clicksHit:0 };
 const P = { kills:0, shots:0, hits:0, streak:0, best:0, ttkSum:0, hsCount:0 };   // live latihan
-const FX = { rings:[], decals:[], dmg:[], trace:0, hm:0, hmHead:false };
+const FX = { rings:[], decals:[], dmg:[], trace:0, hm:0, hmHead:false, aceT:0 };
 let bot = null, peek = null, track = null;
 let PSA = null;
 let psaRoundGains = [];
@@ -739,7 +774,7 @@ function endStillBot(hit, hs) {
   if (hit) {
     LOG.kills.push({ t:Math.round(now), tid:bot.id, ttk:Math.round(now-bot.bornT), shots:bot.shotsFired, hs:!!hs });
     P.kills++; P.streak++; P.best = Math.max(P.best, P.streak); P.ttkSum += now-bot.bornT; if (hs) P.hsCount++;
-    sfxKill(P.streak);
+    killFeedback(now);
   } else { P.streak = 0; }
   bot = null; T.count++;
   const done = !bl.endless && T.count >= (bl.psa ? PSA_CFG.flicksPerRound : bl.n);
@@ -790,7 +825,7 @@ function peekKilled(now, hs) {
     ttkMs: Math.round(now - peek.exposedAt) });
   LOG.kills.push({ t:Math.round(now), tid:bot.id, ttk:Math.round(now-peek.exposedAt), shots:bot.shotsFired, hs:!!hs });
   R3.peekKills++; P.kills++; P.streak++; P.best = Math.max(P.best,P.streak); if (hs) P.hsCount++;
-  sfxKill(P.streak);
+  killFeedback(now);
   if (T.block.adapt) peek.window = clamp(peek.window - 60, 480, 1100);
   bot = null; T.count++;
   if (!T.block.endless && T.count >= T.block.n) nextBlock(); else startPeekRep();
@@ -901,7 +936,7 @@ function resetSession(modeName) {
   readInputs(); logReset();
   R3.flick=[]; R3.micro=[]; R3.peekKills=0; R3.misses=0; R3.clicksAll=0; R3.clicksHit=0;
   P.kills=0; P.shots=0; P.hits=0; P.streak=0; P.best=0; P.ttkSum=0; P.hsCount=0;
-  FX.rings=[]; FX.decals=[]; FX.dmg=[]; FX.hm=0; FX.trace=0;
+  FX.rings=[]; FX.decals=[]; FX.dmg=[]; FX.hm=0; FX.trace=0; FX.aceT=0;
   ENG.sens = S.sens;
   cam.yaw = 0; cam.pitch = 0;
   LOG.meta = { app:'range-protocol', v:3, mode:modeName, ts:Date.now(), dpi:S.dpi, sens:S.sens,
@@ -918,7 +953,7 @@ function startTest() {
   resetSession('test');
   T.blocks = TEST_BLOCKS.map(b => ({...b}));
   overlay('MASUK <b>RANGE</b>',
-    `Tes Serius: 4 blok, ±7 menit, jangan setengah-setengah.<br>Sens <b>${fmtS(S.sens)}</b> · klik = nembak, <b>tahan = spray</b> (3 peluru pertama akurat, sisanya melebar).`,
+    `Tes Serius: 4 blok, ±7 menit, jangan setengah-setengah.<br>Sens <b>${fmtS(S.sens)}</b> · klik = nembak, <b>tahan = spray</b> (pola recoil ala Vandal: naik dulu terus geser — tarik ke bawah buat ngontrol).`,
     { hint:'Klik area game buat lock mouse & mulai' });
 }
 function startPractice(drill) {
@@ -1013,20 +1048,29 @@ function updateRawHud() {
     S.lockMode === 'lock' ? 'Pointer lock tanpa unadjustedMovement — pastiin Enhance Pointer Precision OFF.' :
     'Pointer lock ga tersedia di viewer ini — buat data akurat, download file & buka langsung di Chrome/Edge.';
 }
-const FIRE = { held:false, iv:102, n:0, lastShot:0 };   // full-auto ±9,8 peluru/detik ala Vandal
+const FIRE = { held:false, iv:102, n:0, lastShot:0, dirW:1 };   // full-auto ±9,8 peluru/detik ala Vandal
+function recoilDev(n) {
+  // pola recoil ala Vandal: 3 peluru akurat → naik vertikal (tarik ke bawah buat ngontrol) → geser kiri-kanan
+  const j = a => (Math.random()*2-1)*a;
+  if (n === 0) return { y:0, p:0 };
+  if (n < 3)  return { y:j(0.05), p:j(0.04) };
+  if (n < 9) { const c = n-2; return { y:j(0.1 + c*0.03), p: 0.38*c + j(0.12) }; }
+  const seg = Math.floor((n-9)/4) % 2;
+  const dir = FIRE.dirW * (seg ? -1 : 1);
+  return { y: dir*(0.9 + Math.random()*1.3) + j(0.25), p: 2.3 + j(0.55) };
+}
 function fireOnce(now) {
   if (T.paused || !T.running || !T.block) return;
-  const spread = FIRE.n < 3 ? 0 : Math.min(0.5, (FIRE.n-2)*0.09);  // 3 peluru pertama akurat, habis itu bloom
-  shoot(now, spread);
+  const d = recoilDev(FIRE.n);
+  shoot(now, d.y, d.p);
   FIRE.n++; FIRE.lastShot = now;
 }
 document.addEventListener('mouseup', () => { FIRE.held = false; });
 
-function shoot(now, spread = 0) {
+function shoot(now, devY = 0, devP = 0) {
   R3.clicksAll++; P.shots++;
   FX.trace = now;
   sfxShot();
-  const devY = (Math.random()*2-1)*spread, devP = (Math.random()*2-1)*spread*0.9;
   if (bot && bot.alive) {
     const o = offsetsTo(bot);
     const effYaw = o.offYaw + devY, effPitch = o.offPitch + devP;
@@ -1079,7 +1123,7 @@ function shoot(now, spread = 0) {
       headAng:null, dist:null, phase:(T.block?.psa?'psa':T.block?.key) });
   }
   R3.misses++; P.streak = 0;
-  const fy = rad(cam.yaw), fp = rad(cam.pitch), dd = 34;
+  const fy = rad(cam.yaw + devY), fp = rad(cam.pitch + devP), dd = 34;
   FX.decals.push({ t:now, x:Math.sin(fy)*Math.cos(fp)*dd, y:EYE+Math.sin(fp)*dd, z:Math.cos(fy)*Math.cos(fp)*dd });
   if (FX.decals.length > 14) FX.decals.shift();
 }
@@ -1116,7 +1160,7 @@ stage.addEventListener('mousedown', async e => {
     return;
   }
   FIRE.held = true;
-  if (now - FIRE.lastShot > 260) FIRE.n = 0;   // burst baru → bloom reset
+  if (now - FIRE.lastShot > 260) { FIRE.n = 0; FIRE.dirW = Math.random() < 0.5 ? -1 : 1; }   // burst baru → recoil reset
   fireOnce(now);
 });
 stage.addEventListener('contextmenu', e => e.preventDefault());
@@ -1355,6 +1399,18 @@ function drawFX(now) {
     if (!d0.col.startsWith('rgb')) { ctx.globalAlpha = 1-k; ctx.fillStyle = d0.col; }
     ctx.fillText(d0.txt, p.x, p.y);
     ctx.globalAlpha = 1;
+  }
+  if (FX.aceT && now - FX.aceT < 1600) {
+    const kA = (now - FX.aceT)/1600;
+    const al = kA < 0.12 ? kA/0.12 : 1-(kA-0.12)/0.88;
+    ctx.save();
+    ctx.globalAlpha = clamp(al, 0, 1);
+    ctx.textAlign = 'center';
+    ctx.font = `800 ${Math.round(58 + (kA<0.12 ? (0.12-kA)/0.12*26 : 0))}px system-ui`;
+    ctx.fillStyle = '#3be0c8';
+    ctx.shadowColor = 'rgba(59,224,200,.8)'; ctx.shadowBlur = 24;
+    ctx.fillText('ACE', W/2, H*0.3);
+    ctx.restore();
   }
   FX.decals = FX.decals.filter(d0 => now-d0.t < 2600);
   for (const d0 of FX.decals) {
